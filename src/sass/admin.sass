@@ -1,0 +1,136 @@
+// ========================================================
+// Wix to WordPress Migrator - Admin Master Stylesheet
+// Strictly indented .sass syntax (no curly braces or semicolons)
+// Integrates natively with WordPress Admin UI
+// ========================================================
+
+@use 'variables' as *
+
+.w2w-admin-wrap
+  max-width: 1200px
+  margin-top: $spacing-md
+  font-family: $font-family-base
+  color: $color-text-main
+
+  h1.w2w-title
+    display: flex
+    align-items: center
+    gap: $spacing-sm
+    font-size: $font-size-xl
+    margin-bottom: $spacing-md
+
+  .w2w-badge-version
+    font-size: $font-size-sm
+    font-weight: 500
+    color: $color-primary
+    background: $color-info-bg
+    border: 1px solid $color-border-subtle
+    padding: $spacing-xxs $spacing-sm
+    border-radius: $radius-sm
+
+// Cards and Containers
+.w2w-card
+  background: $color-card-bg
+  border: 1px solid $color-border
+  border-radius: $radius-md
+  padding: $spacing-lg
+  margin-bottom: $spacing-lg
+  box-shadow: $shadow-card
+
+  &__header
+    border-bottom: 1px solid $color-border-subtle
+    padding-bottom: $spacing-sm
+    margin-bottom: $spacing-md
+
+    h2
+      font-size: $font-size-lg
+      margin: 0
+      color: $color-text-main
+
+// Environment Health Check Grid
+.w2w-health-grid
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))
+  gap: $spacing-md
+  margin-top: $spacing-md
+
+.w2w-health-item
+  display: flex
+  align-items: center
+  justify-content: space-between
+  padding: $spacing-sm $spacing-md
+  border-radius: $radius-sm
+  border: 1px solid $color-border-subtle
+  background: $color-background
+
+  &--passed
+    border-left: 4px solid $color-success
+
+  &--failed
+    border-left: 4px solid $color-error
+
+  &__label
+    font-weight: 600
+    font-size: $font-size-base
+
+  &__status
+    font-size: $font-size-sm
+
+// Progress Bar
+.w2w-progress
+  margin-top: $spacing-md
+
+  &__track
+    width: 100%
+    height: 20px
+    background: $color-background
+    border: 1px solid $color-border
+    border-radius: $radius-sm
+    overflow: hidden
+    position: relative
+
+  &__bar
+    height: 100%
+    width: 0%
+    background: $color-primary
+    transition: width 0.3s ease
+
+  &__label
+    margin-top: $spacing-xs
+    font-size: $font-size-sm
+    color: $color-text-muted
+    display: flex
+    justify-content: space-between
+
+// Log Console Box
+.w2w-log-box
+  background: $color-text-main
+  color: $color-background
+  font-family: monospace
+  font-size: $font-size-sm
+  padding: $spacing-md
+  border-radius: $radius-sm
+  max-height: 240px
+  overflow-y: auto
+  margin-top: $spacing-md
+
+  .log-line
+    margin: 0 0 $spacing-xxs 0
+    line-height: 1.4
+
+    &--info
+      color: $color-info-bg
+
+    &--warning
+      color: $color-warning
+
+    &--error
+      color: $color-error-bg
+
+// Table Thumbnail Preview
+.w2w-thumb-preview
+  width: 50px
+  height: 50px
+  object-fit: cover
+  border-radius: $radius-sm
+  border: 1px solid $color-border-subtle

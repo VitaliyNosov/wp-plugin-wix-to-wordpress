@@ -1,0 +1,20 @@
+{
+  "name": "wix-to-wp-plugin",
+  "version": "1.0.0",
+  "description": "Enterprise-grade WordPress plugin to migrate posts, media, categories, and SEO metadata from Wix to WordPress.",
+  "author": "Vitaliy Nosov",
+  "license": "GPL-2.0-or-later",
+  "private": true,
+  "scripts": {
+    "build:css": "sass src/sass/admin.sass admin/css/admin.css --style=compressed --no-source-map",
+    "build:js": "esbuild src/js/admin.js --bundle --minify --outfile=admin/js/admin.js",
+    "build": "npm run build:css && npm run build:js",
+    "dev:css": "sass src/sass/admin.sass admin/css/admin.css --watch",
+    "dev:js": "esbuild src/js/admin.js --bundle --outfile=admin/js/admin.js --watch",
+    "test": "php tests/run-tests.php"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5",
+    "sass": "^1.77.6"
+  }
+}
