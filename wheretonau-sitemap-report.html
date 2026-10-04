@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WhereToNau.com — Site Content Map</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --card: #ffffff;
+    --text: #2a2420;
+    --muted: #6b6259;
+    --border: #e6e0d8;
+    --accent: #b5652f;
+    --accent-bg: #f4e6da;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1b1815;
+      --card: #24201c;
+      --text: #ece6de;
+      --muted: #a89e92;
+      --border: #3a342d;
+      --accent: #e08a4d;
+      --accent-bg: #33281d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1b1815; --card: #24201c; --text: #ece6de; --muted: #a89e92;
+    --border: #3a342d; --accent: #e08a4d; --accent-bg: #33281d;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 24px 16px 60px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+  .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+  .stat { background: var(--accent-bg); border-radius: 10px; padding: 10px 16px; flex: 1 1 120px; text-align: center; }
+  .stat .num { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+  .stat .label { font-size: 0.75rem; color: var(--muted); }
+  h2 { font-size: 1.1rem; margin: 32px 0 10px; padding-bottom: 6px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 0.95rem; margin: 18px 0 6px; color: var(--accent); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; margin-bottom: 8px; }
+  ul.linklist { list-style: none; margin: 0; padding: 0; }
+  ul.linklist li { padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  ul.linklist li:last-child { border-bottom: none; }
+  a { color: var(--accent); text-decoration: none; word-break: break-word; }
+  a:hover { text-decoration: underline; }
+  .tag { display: inline-block; font-size: 0.7rem; color: var(--muted); background: var(--accent-bg); border-radius: 6px; padding: 1px 7px; margin-left: 6px; }
+  .date { color: var(--muted); font-size: 0.78rem; float: right; margin-left: 8px; }
+  .overflow { overflow-x: auto; }
+  footer { color: var(--muted); font-size: 0.78rem; margin-top: 40px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>WhereToNau.com — Site Content Map</h1>
+  <div class="sub">A navigable overview of all site pages, categories, and blog posts (from sitemap.xml data)</div>
+
+  <div class="stats">
+    <div class="stat"><div class="num">87</div><div class="label">Total URLs</div></div>
+    <div class="stat"><div class="num">65</div><div class="label">Blog Posts</div></div>
+    <div class="stat"><div class="num">7</div><div class="label">Site Sections</div></div>
+    <div class="stat"><div class="num">5</div><div class="label">Blog Categories</div></div>
+    <div class="stat"><div class="num">8</div><div class="label">Static Pages</div></div>
+  </div>
+
+  <h2>🧭 Site Structure — Top-Level Sections</h2>
+  <div class="card"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/travel" target="_blank">Travel</a></li>
+    <li><a href="https://www.wheretonau.com/eat" target="_blank">Eat</a></li>
+    <li><a href="https://www.wheretonau.com/relax" target="_blank">Relax</a></li>
+    <li><a href="https://www.wheretonau.com/lifestyle" target="_blank">Lifestyle</a></li>
+    <li><a href="https://www.wheretonau.com/asia" target="_blank">Asia</a></li>
+    <li><a href="https://www.wheretonau.com/northamerica" target="_blank">North America</a></li>
+    <li><a href="https://www.wheretonau.com/caribbean" target="_blank">Caribbean</a></li>
+    <li><a href="https://www.wheretonau.com/europe" target="_blank">Europe</a></li>
+  </ul></div>
+
+  <h2>🏷️ Blog Categories</h2>
+  <div class="card"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/blog/categories/travel" target="_blank">Travel</a></li>
+    <li><a href="https://www.wheretonau.com/blog/categories/__eat" target="_blank">Eat</a> <span class="tag">note: URL has double underscore</span></li>
+    <li><a href="https://www.wheretonau.com/blog/categories/relax" target="_blank">Relax</a></li>
+    <li><a href="https://www.wheretonau.com/blog/categories/lifestyle" target="_blank">Lifestyle</a></li>
+    <li><a href="https://www.wheretonau.com/blog/categories/paris-hotels" target="_blank">Paris Hotels</a> <span class="tag">unique, not a top-level section</span></li>
+  </ul></div>
+
+  <h2>📄 Static &amp; Utility Pages</h2>
+  <div class="card"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com" target="_blank">Homepage</a></li>
+    <li><a href="https://www.wheretonau.com/blog" target="_blank">Blog (main hub)</a></li>
+    <li><a href="https://www.wheretonau.com/videos" target="_blank">Videos</a></li>
+    <li><a href="https://www.wheretonau.com/print" target="_blank">Print</a></li>
+    <li><a href="https://www.wheretonau.com/about" target="_blank">About</a></li>
+    <li><a href="https://www.wheretonau.com/lets-work-together" target="_blank">Let's Work Together</a></li>
+    <li><a href="https://www.wheretonau.com/privacy-policy" target="_blank">Privacy Policy</a></li>
+    <li><a href="https://www.wheretonau.com/terms-of-use" target="_blank">Terms of Use</a></li>
+  </ul></div>
+
+  <h2>📝 Blog Posts — Grouped by Destination/Theme (65 total)</h2>
+
+  <h3>🇩🇴 Dominican Republic (20)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/the-perfect-5-days-in-punta-cana-itinerary-for-your-first-visit" target="_blank">5 Days in Punta Cana — Itinerary</a><span class="date">2026-01-09</span></li>
+    <li><a href="https://www.wheretonau.com/post/unique-things-to-do-in-the-dominican-republic-off-the-beaten-path" target="_blank">Unique Things to Do — Off the Beaten Path</a><span class="date">2026-03-24</span></li>
+    <li><a href="https://www.wheretonau.com/post/visiting-cayo-arena-in-punta-rucia-dominican-republic-travel" target="_blank">Visiting Cayo Arena, Punta Rucía</a><span class="date">2026-01-09</span></li>
+    <li><a href="https://www.wheretonau.com/post/where-to-eat-in-santo-domingo-dominican-republic-my-favorite-restaurants" target="_blank">Where to Eat in Santo Domingo</a><span class="date">2026-07-27</span></li>
+    <li><a href="https://www.wheretonau.com/post/relax-at-natura-cabana-boutique-hotel-in-cabarete-dominican-republic" target="_blank">Natura Cabana Boutique Hotel, Cabarete</a><span class="date">2022-02-04</span></li>
+    <li><a href="https://www.wheretonau.com/post/el-valle-eco-lodge-relaxing-in-the-jungle" target="_blank">El Valle Eco Lodge</a><span class="date">2022-01-22</span></li>
+    <li><a href="https://www.wheretonau.com/post/best-beaches-in-dominican-republic" target="_blank">Best Beaches in the Dominican Republic</a><span class="date">2026-03-25</span></li>
+    <li><a href="https://www.wheretonau.com/post/my-epic-beach-stay-at-unique-exotic-hotel-in-el-valle-samana-dominican-republic" target="_blank">Beach Stay, El Valle / Samaná</a><span class="date">2022-11-16</span></li>
+    <li><a href="https://www.wheretonau.com/post/17-reasons-the-dominican-republic-should-be-your-next-travel-destination" target="_blank">17 Reasons to Visit the DR</a><span class="date">2022-07-31</span></li>
+    <li><a href="https://www.wheretonau.com/post/ultimate-guide-best-things-to-do-in-cabarete-dominican-republic" target="_blank">Ultimate Guide to Cabarete</a><span class="date">2026-03-24</span></li>
+    <li><a href="https://www.wheretonau.com/post/visiting-los-haitises-national-park-the-land-of-many-mountains" target="_blank">Los Haitises National Park</a><span class="date">2025-12-05</span></li>
+    <li><a href="https://www.wheretonau.com/post/santo-domingo-zona-colonial-walking-tour" target="_blank">Santo Domingo — Zona Colonial Walking Tour</a><span class="date">2024-02-19</span></li>
+    <li><a href="https://www.wheretonau.com/post/dominican-republic-road-trip-exploring-the-island-in-2-weeks" target="_blank">DR Road Trip — 2 Weeks</a><span class="date">2026-03-24</span></li>
+    <li><a href="https://www.wheretonau.com/post/the-best-places-to-stay-in-santo-domingo-dominican-republic" target="_blank">Best Places to Stay in Santo Domingo</a><span class="date">2026-03-23</span></li>
+    <li><a href="https://www.wheretonau.com/post/saona-island-beach-ultimate-guide-to-paradise-in-the-dr" target="_blank">Saona Island Beach — Guide</a><span class="date">2026-03-25</span></li>
+    <li><a href="https://www.wheretonau.com/post/the-most-instagrammable-hotel-in-the-dominican-republic-punta-rucia-lodge" target="_blank">Most Instagrammable Hotel — Punta Rucía Lodge</a><span class="date">2022-08-07</span></li>
+    <li><a href="https://www.wheretonau.com/post/amazing-airbnb-stay-casa-el-paraiso-las-galeras-dominican-republic" target="_blank">Airbnb Stay — Casa El Paraíso, Las Galeras</a><span class="date">2026-03-24</span></li>
+    <li><a href="https://www.wheretonau.com/post/wilson-s-restaurant-the-journey-to-authentic-dominican-cuisine-cabarete" target="_blank">Wilson's Restaurant — Authentic Cuisine, Cabarete</a><span class="date">2024-02-19</span></li>
+    <li><a href="https://www.wheretonau.com/post/dominican-republic-caribbean-yoga-retreat-ki-ra-holistic-living-la-romana" target="_blank">Yoga Retreat — Ki-Ra Holistic Living, La Romana</a><span class="date">2022-12-04</span></li>
+  </ul></div>
+
+  <h3>🇲🇽 Mexico (8)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/fine-dining-in-oaxaca" target="_blank">Fine Dining in Oaxaca</a><span class="date">2020-10-14</span></li>
+    <li><a href="https://www.wheretonau.com/post/best-cenotes-to-visit-in-the-yucatan-peninsula-and-riviera-maya" target="_blank">Best Cenotes — Yucatán &amp; Riviera Maya</a><span class="date">2026-07-30</span></li>
+    <li><a href="https://www.wheretonau.com/post/mexico-part-ii-central-mexico" target="_blank">Mexico Part II — Central Mexico</a><span class="date">2020-11-18</span></li>
+    <li><a href="https://www.wheretonau.com/post/top-ten-things-to-do-in-central-mexico" target="_blank">Top 10 Things to Do in Central Mexico</a><span class="date">2020-11-19</span></li>
+    <li><a href="https://www.wheretonau.com/post/favorite-things-to-do-on-a-yucatan-peninsula-road-trip" target="_blank">Yucatán Peninsula Road Trip</a><span class="date">2025-03-30</span></li>
+    <li><a href="https://www.wheretonau.com/post/hotel-zentik-project-things-to-do-in-valladolid-mexico" target="_blank">Hotel Zentik Project, Valladolid</a><span class="date">2025-05-25</span></li>
+    <li><a href="https://www.wheretonau.com/post/best-restaurants-in-mexico-city-where-to-eat-and-drink" target="_blank">Best Restaurants in Mexico City</a><span class="date">2025-06-22</span></li>
+    <li><a href="https://www.wheretonau.com/post/mexico-road-trip-a-perfect-9-day-yucatan-peninsula-itinerary" target="_blank">9-Day Yucatán Peninsula Road Trip</a><span class="date">2026-03-24</span></li>
+  </ul></div>
+
+  <h3>🇯🇵 Japan (6)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/japan-part-i-two-weeks-in-japan" target="_blank">Japan Part I — Two Weeks</a><span class="date">2018-02-07</span></li>
+    <li><a href="https://www.wheretonau.com/post/japan-part-ii-two-weeks-in-japan" target="_blank">Japan Part II — Two Weeks</a><span class="date">2021-08-23</span></li>
+    <li><a href="https://www.wheretonau.com/post/top-ten-things-to-do-in-japan" target="_blank">Top 10 Things to Do in Japan</a><span class="date">2020-12-02</span></li>
+    <li><a href="https://www.wheretonau.com/post/8-things-to-do-before-arriving-in-japan" target="_blank">8 Things to Do Before Arriving in Japan</a><span class="date">2018-02-06</span></li>
+    <li><a href="https://www.wheretonau.com/post/cheap-eats-in-tokyo" target="_blank">Cheap Eats in Tokyo</a><span class="date">2020-12-05</span></li>
+    <li><a href="https://www.wheretonau.com/post/relax-at-kokuya" target="_blank">Relax at Kokuya</a><span class="date">2020-12-04</span></li>
+  </ul></div>
+
+  <h3>🇫🇷 France / Paris (5)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/paris-3-day-itinerary" target="_blank">Paris — 3 Day Itinerary</a><span class="date">2026-04-27</span></li>
+    <li><a href="https://www.wheretonau.com/post/best-day-tours-from-paris-and-top-inside-the-city-trips" target="_blank">Best Day Tours from Paris</a><span class="date">2026-06-08</span></li>
+    <li><a href="https://www.wheretonau.com/post/7-cool-places-to-stay-in-paris-hotels-with-an-eiffel-tower-view" target="_blank">7 Hotels with Eiffel Tower Views</a><span class="date">2026-06-11</span></li>
+  </ul></div>
+
+  <h3>🇹🇷 Turkey (5)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/the-fairytale-world-of-cappadocia-your-complete-3-day-itinerary-travel-guide" target="_blank">Cappadocia — 3 Day Itinerary</a><span class="date">2021-02-23</span></li>
+    <li><a href="https://www.wheretonau.com/post/3-days-in-istanbul" target="_blank">3 Days in Istanbul</a><span class="date">2026-03-24</span></li>
+    <li><a href="https://www.wheretonau.com/post/15-amazing-things-to-see-and-do-in-turkey" target="_blank">15 Amazing Things to See &amp; Do in Turkey</a><span class="date">2021-02-23</span></li>
+    <li><a href="https://www.wheretonau.com/post/pamukkale-hot-springs-hierapolis" target="_blank">Pamukkale Hot Springs, Hierapolis</a><span class="date">2021-08-15</span></li>
+    <li><a href="https://www.wheretonau.com/post/in-and-around-kusadasi" target="_blank">In &amp; Around Kuşadası</a><span class="date">2021-08-15</span></li>
+  </ul></div>
+
+  <h3>🇮🇸 Iceland (3)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/short-layover-in-iceland" target="_blank">Short Layover in Iceland</a><span class="date">2018-01-28</span></li>
+    <li><a href="https://www.wheretonau.com/post/iceland-4-days-guide-with-tours" target="_blank">Iceland — 4 Day Guide with Tours</a><span class="date">2021-02-13</span></li>
+    <li><a href="https://www.wheretonau.com/post/the-earth-is-my-oven-baking-rye-bread-from-hot-springs-in-iceland" target="_blank">Baking Rye Bread in Iceland's Hot Springs</a><span class="date">2018-01-27</span></li>
+  </ul></div>
+
+  <h3>🇺🇸 New York City (4)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/non-touristy-things-to-do-in-nyc-to-avoid-the-crowds" target="_blank">Non-Touristy Things to Do in NYC</a><span class="date">2026-02-18</span></li>
+    <li><a href="https://www.wheretonau.com/post/visiting-nyc-for-the-first-time-where-to-stay" target="_blank">Visiting NYC for the First Time — Where to Stay</a><span class="date">2025-06-24</span></li>
+    <li><a href="https://www.wheretonau.com/post/rainy-day-activities-nyc-9-fun-indoor-things-to-do-from-a-local" target="_blank">Rainy Day Activities in NYC</a><span class="date">2026-07-26</span></li>
+    <li><a href="https://www.wheretonau.com/post/newark-transfer-to-manhattan-getting-from-nyc-to-newark-airport" target="_blank">Newark Airport to Manhattan Transfer</a><span class="date">2026-03-17</span></li>
+  </ul></div>
+
+  <h3>🇺🇸 New Orleans (3)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/4-days-in-new-orleans-new-orleans-bucket-list" target="_blank">4 Days in New Orleans — Bucket List</a><span class="date">2026-07-28</span></li>
+    <li><a href="https://www.wheretonau.com/post/top-ten-things-to-do-in-new-orleans" target="_blank">Top 10 Things to Do in New Orleans</a><span class="date">2021-08-15</span></li>
+    <li><a href="https://www.wheretonau.com/post/5-classic-nola-cocktails-to-try" target="_blank">5 Classic NOLA Cocktails to Try</a><span class="date">2024-06-05</span></li>
+  </ul></div>
+
+  <h3>🇪🇺 Europe — Italy, Spain, Greece (5)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/tackling-rome-in-3-days" target="_blank">Tackling Rome in 3 Days</a><span class="date">2018-01-15</span></li>
+    <li><a href="https://www.wheretonau.com/post/17-venice-italy-hotels-with-canal-view-venice-neighborhoods" target="_blank">17 Venice Hotels with Canal Views</a><span class="date">2026-03-23</span></li>
+    <li><a href="https://www.wheretonau.com/post/10-days-in-spain-best-places-to-visit-in-spain-for-first-timers" target="_blank">10 Days in Spain</a><span class="date">2026-07-30</span></li>
+    <li><a href="https://www.wheretonau.com/post/foodie-in-madrid" target="_blank">Foodie in Madrid</a><span class="date">2018-02-05</span></li>
+    <li><a href="https://www.wheretonau.com/post/5-days-in-athens" target="_blank">5 Days in Athens</a><span class="date">2026-07-29</span></li>
+  </ul></div>
+
+  <h3>🌏 Asia — Other (1)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/22-hours-in-beijing" target="_blank">22 Hours in Beijing</a><span class="date">2020-12-01</span></li>
+  </ul></div>
+
+  <h3>🎒 U.S. — Other / Las Vegas (1)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/packing-list-for-las-vegas-vegas-outfits" target="_blank">Packing List for Las Vegas</a><span class="date">2026-07-19</span></li>
+  </ul></div>
+
+  <h3>💆 Lifestyle / Mindset / General Travel Tips (7)</h3>
+  <div class="card overflow"><ul class="linklist">
+    <li><a href="https://www.wheretonau.com/post/sticking-to-your-new-year-s-resolutions" target="_blank">Sticking to Your New Year's Resolutions</a><span class="date">2020-12-20</span></li>
+    <li><a href="https://www.wheretonau.com/post/visualizing-and-manifesting-all-you-desire" target="_blank">Visualizing &amp; Manifesting All You Desire</a><span class="date">2020-12-21</span></li>
+    <li><a href="https://www.wheretonau.com/post/hold-yourself-accountable" target="_blank">Hold Yourself Accountable</a><span class="date">2021-01-01</span></li>
+    <li><a href="https://www.wheretonau.com/post/healing-mantras-affirmations-letting-go-and-living-in-the-moment-to-release-fear" target="_blank">Healing Mantras &amp; Affirmations</a><span class="date">2021-02-01</span></li>
+    <li><a href="https://www.wheretonau.com/post/travel-essentials-for-women-things-to-take-on-a-long-haul-flight" target="_blank">Travel Essentials for Women — Long-Haul Flights</a><span class="date">2025-12-09</span></li>
+    <li><a href="https://www.wheretonau.com/post/caribbean-beach-vacation-packing-ideas" target="_blank">Caribbean Beach Vacation — Packing Ideas</a><span class="date">2024-05-26</span></li>
+    <li><a href="https://www.wheretonau.com/post/discover-your-next-summer-destination-from-top-travel-experts" target="_blank">Discover Your Next Summer Destination</a><span class="date">2024-04-22</span></li>
+  </ul></div>
+
+  <footer>Compiled from wheretonau.com sitemap data (main pages, blog posts, and blog categories) · 87 total URLs</footer>
+</div>
+</body>
+</html>
