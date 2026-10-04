@@ -121,7 +121,12 @@ class W2W_Ajax_Handler {
 		$input = ! empty( $source_url ) ? $source_url : $raw_xml;
 
 		if ( empty( $input ) ) {
-			wp_send_json_error( array( 'message' => __( 'Please provide a valid RSS feed URL or raw XML feed.', 'wix-to-wp-migrator' ) ), 400 );
+			wp_send_json_error( array( 'message' => __( 'Please provide a valid Wix post URL, sitemap XML, or RSS feed.', 'wix-to-wp-migrator' ) ), 400 );
+		}
+
+		// Automatically detect source type (single_post, sitemap, or rss) if not explicitly set or set to rss.
+		if ( empty( $source_type ) || 'auto' === $source_type || 'rss' === $source_type ) {
+			$source_type = W2W_Source_Manager::detect_source_type( $input );
 		}
 
 		$adapter = $this->source_manager->get_adapter( $source_type );
@@ -134,7 +139,7 @@ class W2W_Ajax_Handler {
 			$posts = $adapter->fetch_posts( $input );
 
 			if ( empty( $posts ) ) {
-				throw new \RuntimeException( __( 'No blog posts were found in the provided RSS feed.', 'wix-to-wp-migrator' ) );
+				throw new \RuntimeException( __( 'No blog posts were found in the provided Wix source.', 'wix-to-wp-migrator' ) );
 			}
 
 			// Generate a unique session token for this preview.
@@ -160,7 +165,7 @@ class W2W_Ajax_Handler {
 					'original_url'       => $dto->original_url,
 					'featured_image_url' => $dto->featured_image_url,
 					'categories'         => $dto->categories,
-					'author_name'        => $dto->author_name ?: __( 'Unknown Author', 'wix-to-wp-migrator' ),
+					'author_name'        => $dto->author_name ?: __( 'Author from Wix', 'wix-to-wp-migrator' ),
 					'date_published'     => $dto->date_published,
 					'has_content'        => ! empty( $dto->content ),
 				);
@@ -175,9 +180,10 @@ class W2W_Ajax_Handler {
 
 		wp_send_json_success(
 			array(
-				'session_id' => $session_id,
-				'total'      => count( $preview_items ),
-				'posts'      => $preview_items,
+				'session_id'  => $session_id,
+				'source_type' => $source_type,
+				'total'       => count( $preview_items ),
+				'posts'       => $preview_items,
 			)
 		);
 	}
@@ -241,6 +247,31 @@ class W2W_Ajax_Handler {
 
 		$results = array();
 		foreach ( $dtos as $dto ) {
+			// If post has no content (e.g. previewed from sitemap), lazily fetch full content via scraper.
+			if ( empty( $dto->content ) && ! empty( $dto->original_url ) ) {
+				try {
+					$scraper = $this->source_manager->get_adapter( 'single_post' );
+					if ( $scraper ) {
+						$scraped_list = $scraper->fetch_posts( $dto->original_url );
+						if ( ! empty( $scraped_list[0] ) ) {
+							$scraped_dto = $scraped_list[0];
+							$dto->content = $scraped_dto->content;
+							if ( empty( $dto->featured_image_url ) ) {
+								$dto->featured_image_url = $scraped_dto->featured_image_url;
+							}
+							if ( ! empty( $scraped_dto->author_name ) ) {
+								$dto->author_name = $scraped_dto->author_name;
+							}
+							if ( ! empty( $scraped_dto->seo_meta ) ) {
+								$dto->seo_meta = $scraped_dto->seo_meta;
+							}
+						}
+					}
+				} catch ( \Throwable $e ) {
+					$this->logger->warning( 'Lazy scrape failed for post: ' . $dto->original_url, array( 'error' => $e->getMessage() ) );
+				}
+			}
+
 			$result    = $this->coordinator->process_single_post( $dto, $batch_id, $options );
 			$results[] = $result;
 		}

@@ -15,24 +15,115 @@ $current_user_id = get_current_user_id();
 	<!-- 1. Source & Configuration Card -->
 	<div class="w2w-card">
 		<h2 class="w2w-card-title">
-			<span class="dashicons dashicons-rss"></span>
-			<?php esc_html_e( '1. Connect Wix RSS Feed', 'wix-to-wp-migrator' ); ?>
+			<span class="dashicons dashicons-admin-links"></span>
+			<?php esc_html_e( '1. Connect Wix Content Source', 'wix-to-wp-migrator' ); ?>
 		</h2>
 		<p class="description">
-			<?php esc_html_e( 'Enter the public RSS feed URL of your Wix blog (usually located at https://yourdomain.com/blog-feed.xml or feed.xml).', 'wix-to-wp-migrator' ); ?>
+			<?php esc_html_e( 'Enter the URL of your Wix content source. The plugin automatically detects whether you provide a Full Sitemap XML, a Single Post URL, or an RSS Feed.', 'wix-to-wp-migrator' ); ?>
 		</p>
+
+		<!-- In-Plugin Mini-Documentation & Ingestion Modes -->
+		<div class="w2w-guide-panel">
+			<div class="w2w-guide-title">
+				<span class="dashicons dashicons-book-alt"></span>
+				<strong><?php esc_html_e( 'Quick Guide: Supported Wix Ingestion Methods', 'wix-to-wp-migrator' ); ?></strong>
+			</div>
+			<p class="w2w-guide-subtitle">
+				<?php esc_html_e( 'Choose your preferred ingestion method below or click "Insert Example" to test with live demo data immediately.', 'wix-to-wp-migrator' ); ?>
+			</p>
+
+			<div class="w2w-guide-grid">
+				<!-- Method 1: Full Sitemap XML -->
+				<div class="w2w-guide-card w2w-guide-card-recommended">
+					<div class="w2w-guide-card-head">
+						<h4 class="w2w-guide-card-title">
+							<span class="dashicons dashicons-networking"></span>
+							<?php esc_html_e( 'Full Sitemap XML', 'wix-to-wp-migrator' ); ?>
+						</h4>
+						<span class="w2w-badge w2w-badge-success"><?php esc_html_e( 'Recommended (All Posts)', 'wix-to-wp-migrator' ); ?></span>
+					</div>
+					<p class="w2w-guide-card-desc">
+						<?php esc_html_e( 'Bypasses Wix\'s 20-post RSS limit to import your entire historical archive (65+ posts). Fetches all post URLs from sitemap and scrapes complete rich content dynamically in batches.', 'wix-to-wp-migrator' ); ?>
+					</p>
+					<div class="w2w-guide-example-box">
+						<code>https://yourdomain.com/blog-posts-sitemap.xml</code>
+					</div>
+					<div class="w2w-guide-card-foot">
+						<span class="description"><?php esc_html_e( 'Example: wheretonau.com', 'wix-to-wp-migrator' ); ?></span>
+						<button type="button" class="button button-secondary w2w-btn-use-example"
+								data-url="https://www.wheretonau.com/blog-posts-sitemap.xml"
+								data-type="sitemap">
+							<span class="dashicons dashicons-insert"></span>
+							<?php esc_html_e( 'Insert Example', 'wix-to-wp-migrator' ); ?>
+						</button>
+					</div>
+				</div>
+
+				<!-- Method 2: Single Post URL -->
+				<div class="w2w-guide-card">
+					<div class="w2w-guide-card-head">
+						<h4 class="w2w-guide-card-title">
+							<span class="dashicons dashicons-admin-post"></span>
+							<?php esc_html_e( 'Single Post URL', 'wix-to-wp-migrator' ); ?>
+						</h4>
+						<span class="w2w-badge w2w-badge-info"><?php esc_html_e( 'Single Article', 'wix-to-wp-migrator' ); ?></span>
+					</div>
+					<p class="w2w-guide-card-desc">
+						<?php esc_html_e( 'Migrates or updates a single specific Wix article directly. Extracts the full article body, high-res images, categories, tags, author, and Schema.org / OpenGraph SEO metadata.', 'wix-to-wp-migrator' ); ?>
+					</p>
+					<div class="w2w-guide-example-box">
+						<code>https://yourdomain.com/post/your-post-slug</code>
+					</div>
+					<div class="w2w-guide-card-foot">
+						<span class="description"><?php esc_html_e( 'Example: wheretonau.com', 'wix-to-wp-migrator' ); ?></span>
+						<button type="button" class="button button-secondary w2w-btn-use-example"
+								data-url="https://www.wheretonau.com/post/packing-list-for-las-vegas-vegas-outfits"
+								data-type="single_post">
+							<span class="dashicons dashicons-insert"></span>
+							<?php esc_html_e( 'Insert Example', 'wix-to-wp-migrator' ); ?>
+						</button>
+					</div>
+				</div>
+
+				<!-- Method 3: Standard RSS Feed -->
+				<div class="w2w-guide-card">
+					<div class="w2w-guide-card-head">
+						<h4 class="w2w-guide-card-title">
+							<span class="dashicons dashicons-rss"></span>
+							<?php esc_html_e( 'Standard RSS Feed', 'wix-to-wp-migrator' ); ?>
+						</h4>
+						<span class="w2w-badge w2w-badge-neutral"><?php esc_html_e( 'Latest 20 Posts Only', 'wix-to-wp-migrator' ); ?></span>
+					</div>
+					<p class="w2w-guide-card-desc">
+						<?php esc_html_e( 'Standard RSS feed syndication. Fast and lightweight if you only need the most recent 20 posts. Note: Wix Cloudflare restricts RSS feeds to a maximum of 20 items.', 'wix-to-wp-migrator' ); ?>
+					</p>
+					<div class="w2w-guide-example-box">
+						<code>https://yourdomain.com/blog-feed.xml</code>
+					</div>
+					<div class="w2w-guide-card-foot">
+						<span class="description"><?php esc_html_e( 'Example: wheretonau.com', 'wix-to-wp-migrator' ); ?></span>
+						<button type="button" class="button button-secondary w2w-btn-use-example"
+								data-url="https://www.wheretonau.com/blog-feed.xml"
+								data-type="rss">
+							<span class="dashicons dashicons-insert"></span>
+							<?php esc_html_e( 'Insert Example', 'wix-to-wp-migrator' ); ?>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
 
 		<table class="form-table" role="presentation">
 			<tbody>
 				<tr>
 					<th scope="row">
-						<label for="w2w_source_url"><?php esc_html_e( 'Wix RSS Feed URL', 'wix-to-wp-migrator' ); ?> <span class="required">*</span></label>
+						<label for="w2w_source_url"><?php esc_html_e( 'Wix Source URL', 'wix-to-wp-migrator' ); ?> <span class="required">*</span></label>
 					</th>
 					<td>
 						<input name="w2w_source_url" type="url" id="w2w_source_url" class="regular-text code"
-							   placeholder="https://mysite.wixsite.com/blog/blog-feed.xml" style="width: 100%; max-width: 600px;" />
+							   placeholder="https://yourdomain.com/blog-posts-sitemap.xml or /post/slug or /blog-feed.xml" style="width: 100%; max-width: 650px;" />
 						<p class="description">
-							<?php esc_html_e( 'Make sure the Wix blog has RSS enabled in Wix Blog Settings.', 'wix-to-wp-migrator' ); ?>
+							<?php esc_html_e( 'Paste your Sitemap XML (recommended for all posts), a Single Post URL, or an RSS Feed URL. The plugin will auto-detect the format.', 'wix-to-wp-migrator' ); ?>
 						</p>
 					</td>
 				</tr>

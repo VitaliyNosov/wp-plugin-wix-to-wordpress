@@ -335,3 +335,126 @@
     font-family: $font-family-mono
     font-size: $font-size-sm
     background: $color-card-bg
+
+// Quick-Start Mini Documentation Guide
+.w2w-guide-panel
+  background: #f6f7f7
+  border: 1px solid $color-border-subtle
+  border-radius: $radius-md
+  padding: $spacing-md
+  margin: $spacing-md 0 $spacing-lg 0
+
+.w2w-guide-title
+  display: flex
+  align-items: center
+  gap: $spacing-xs
+  font-size: $font-size-md
+  font-weight: 600
+  color: $color-text-main
+  margin: 0 0 $spacing-xs 0
+
+  .dashicons
+    color: $color-primary
+
+.w2w-guide-subtitle
+  font-size: $font-size-sm
+  color: $color-text-muted
+  margin: 0 0 $spacing-md 0
+
+.w2w-guide-grid
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))
+  gap: $spacing-md
+
+.w2w-guide-card
+  background: $color-card-bg
+  border: 1px solid $color-border-subtle
+  border-radius: $radius-sm
+  padding: $spacing-md
+  display: flex
+  flex-direction: column
+  justify-content: space-between
+  transition: border-color 0.2s ease, box-shadow 0.2s ease
+
+  &:hover
+    border-color: $color-primary
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06)
+
+  &.w2w-guide-card-recommended
+    border-color: $color-info
+    background: #fbfdff
+
+.w2w-guide-card-head
+  display: flex
+  align-items: flex-start
+  justify-content: space-between
+  gap: $spacing-xs
+  margin-bottom: $spacing-xs
+
+.w2w-guide-card-title
+  display: flex
+  align-items: center
+  gap: $spacing-xs
+  font-weight: 600
+  font-size: $font-size-sm
+  color: $color-text-main
+  margin: 0
+
+  .dashicons
+    font-size: 16px
+    width: 16px
+    height: 16px
+    color: $color-primary
+
+.w2w-guide-card-desc
+  font-size: 12px
+  color: $color-text-muted
+  line-height: 1.45
+  margin: 0 0 $spacing-sm 0
+
+.w2w-guide-example-box
+  background: $color-background
+  border: 1px solid $color-border-subtle
+  border-radius: $radius-sm
+  padding: $spacing-xs $spacing-sm
+  font-family: $font-family-mono
+  font-size: 11px
+  color: $color-text-main
+  word-break: break-all
+  margin-bottom: $spacing-sm
+
+.w2w-guide-card-foot
+  display: flex
+  align-items: center
+  justify-content: space-between
+  gap: $spacing-xs
+  margin-top: auto
+  padding-top: $spacing-xs
+
+.w2w-btn-use-example
+  display: inline-flex !important
+  align-items: center !important
+  gap: 3px !important
+  font-size: 11px !important
+  height: 26px !important
+  line-height: 24px !important
+  padding: 0 8px !important
+
+  .dashicons
+    font-size: 14px
+    width: 14px
+    height: 14px
+
+.w2w-input-highlight
+  animation: w2wFlash 1.2s ease-out
+
+@keyframes w2wFlash
+  0%
+    background-color: #fff8e5
+    border-color: $color-primary
+    box-shadow: 0 0 8px rgba(34, 113, 177, 0.4)
+  100%
+    background-color: $color-card-bg
+    border-color: $color-border
+    box-shadow: none
+

@@ -126,6 +126,22 @@
     const btnPreview = document.getElementById('w2w-btn-preview');
     if (!btnPreview) return;
 
+    // Wire up mini-documentation example buttons
+    document.querySelectorAll('.w2w-btn-use-example').forEach((btn) => {
+      btn.addEventListener('click', function () {
+        const url = this.dataset.url;
+        const input = document.getElementById('w2w_source_url');
+        if (input && url) {
+          input.value = url;
+          input.classList.remove('w2w-input-highlight');
+          void input.offsetWidth; // Force CSS reflow
+          input.classList.add('w2w-input-highlight');
+          input.focus();
+          input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      });
+    });
+
     btnPreview.addEventListener('click', async function () {
       const urlInput = document.getElementById('w2w_source_url');
       const spinner = document.getElementById('w2w-preview-spinner');
@@ -135,7 +151,7 @@
 
       const url = urlInput ? urlInput.value.trim() : '';
       if (!url) {
-        alert('Please enter a valid Wix RSS feed URL.');
+        alert('Please enter a valid Wix URL (Sitemap XML, Single Post, or RSS feed).');
         if (urlInput) urlInput.focus();
         return;
       }
@@ -145,7 +161,7 @@
 
       try {
         const data = await ajaxPost('w2w_preview_feed', {
-          source_type: 'rss',
+          source_type: 'auto',
           source_url: url,
         });
 
@@ -153,7 +169,15 @@
         state.posts = data.posts || [];
 
         if (countBadge) {
-          countBadge.textContent = `${state.posts.length} posts found`;
+          let sourceLabel = '';
+          if (data.source_type === 'sitemap') {
+            sourceLabel = ' (via Full Sitemap XML)';
+          } else if (data.source_type === 'single_post') {
+            sourceLabel = ' (via Single Post Scraper)';
+          } else if (data.source_type === 'rss') {
+            sourceLabel = ' (via RSS Feed)';
+          }
+          countBadge.textContent = `${state.posts.length} post${state.posts.length === 1 ? '' : 's'} found${sourceLabel}`;
         }
 
         // Render rows

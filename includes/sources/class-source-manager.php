@@ -38,12 +38,56 @@ class W2W_Source_Manager {
 			$this->register_adapter( new W2W_Source_RSS() );
 		}
 
+		if ( class_exists( 'W2W_Source_Scraper' ) ) {
+			$this->register_adapter( new W2W_Source_Scraper() );
+		}
+
+		if ( class_exists( 'W2W_Source_Sitemap' ) ) {
+			$this->register_adapter( new W2W_Source_Sitemap() );
+		}
+
 		/**
 		 * Hook to allow early registration of source adapters.
 		 *
 		 * @param W2W_Source_Manager $this Current source manager instance.
 		 */
 		do_action( 'w2w_register_sources', $this );
+	}
+
+	/**
+	 * Automatically detects the appropriate adapter ID from user URL or content.
+	 *
+	 * @param string $input URL or raw content string.
+	 * @return string Adapter ID ('single_post', 'sitemap', or 'rss').
+	 */
+	public static function detect_source_type( string $input ): string {
+		$trimmed = trim( $input );
+
+		// If input is XML/HTML content.
+		if ( 0 === strpos( $trimmed, '<' ) ) {
+			if ( false !== strpos( $trimmed, '<rss' ) || false !== strpos( $trimmed, '<feed' ) ) {
+				return 'rss';
+			}
+			if ( false !== strpos( $trimmed, '<urlset' ) || false !== strpos( $trimmed, '<sitemapindex' ) ) {
+				return 'sitemap';
+			}
+			return 'single_post';
+		}
+
+		// Input is a URL.
+		if ( false !== strpos( $trimmed, 'sitemap' ) ) {
+			return 'sitemap';
+		}
+
+		if ( false !== strpos( $trimmed, '/post/' ) || false !== strpos( $trimmed, '/posts/' ) ) {
+			return 'single_post';
+		}
+
+		if ( false !== strpos( $trimmed, 'feed' ) ) {
+			return 'rss';
+		}
+
+		return 'rss';
 	}
 
 	/**
