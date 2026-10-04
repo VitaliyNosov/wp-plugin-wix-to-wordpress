@@ -53,7 +53,8 @@ class W2W_Admin {
 			return;
 		}
 
-		$version = defined( 'W2W_VERSION' ) ? W2W_VERSION : '1.0.0';
+		$js_file = dirname( dirname( __FILE__ ) ) . '/admin/js/admin.js';
+		$version = file_exists( $js_file ) ? (string) filemtime( $js_file ) : ( defined( 'W2W_VERSION' ) ? W2W_VERSION : '1.0.0' );
 		$url     = defined( 'W2W_PLUGIN_URL' ) ? W2W_PLUGIN_URL : plugins_url( '/', dirname( __FILE__ ) );
 
 		// Enqueue compiled native WordPress admin stylesheet.

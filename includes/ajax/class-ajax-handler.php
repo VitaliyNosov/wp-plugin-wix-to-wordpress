@@ -129,13 +129,18 @@ class W2W_Ajax_Handler {
 			$source_type = W2W_Source_Manager::detect_source_type( $input );
 		}
 
+		// Auto-normalize protocol if domain was supplied without http(s)://.
+		if ( ! preg_match( '~^https?://~i', $input ) && 0 !== strpos( $input, '<' ) && preg_match( '~^[a-z0-9\-]+(\.[a-z0-9\-]+)+[/\\?#]?~i', $input ) ) {
+			$input = 'https://' . $input;
+		}
+
 		$adapter = $this->source_manager->get_adapter( $source_type );
 		if ( ! $adapter ) {
 			wp_send_json_error( array( 'message' => sprintf( __( 'Source adapter "%s" is not registered.', 'wix-to-wp-migrator' ), esc_html( $source_type ) ) ), 400 );
 		}
 
 		try {
-			$this->logger->info( 'Fetching feed for preview', array( 'source_type' => $source_type ) );
+			$this->logger->info( 'Fetching feed for preview', array( 'source_type' => $source_type, 'url' => $input ) );
 			$posts = $adapter->fetch_posts( $input );
 
 			if ( empty( $posts ) ) {
@@ -171,9 +176,9 @@ class W2W_Ajax_Handler {
 				);
 			}
 
-			$this->logger->info( 'Preview generated successfully', array( 'posts_found' => count( $posts ) ) );
+			$this->logger->info( 'Preview generated successfully', array( 'posts_found' => count( $posts ), 'source_type' => $source_type ) );
 		} catch ( \Throwable $e ) {
-			$this->logger->error( 'Preview failed: ' . $e->getMessage() );
+			$this->logger->error( 'Preview failed: ' . $e->getMessage(), array( 'url' => $input, 'source_type' => $source_type ) );
 			wp_send_json_error( array( 'message' => $e->getMessage() ), 500 );
 			return;
 		}

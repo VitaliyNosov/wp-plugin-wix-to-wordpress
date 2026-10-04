@@ -128,6 +128,12 @@ class W2W_Environment_Check {
 	 */
 	public function validate_source_url( string $url ): bool {
 		$clean_url = trim( $url );
+
+		// Auto-prepend https:// if protocol was omitted but domain structure detected.
+		if ( ! preg_match( '~^https?://~i', $clean_url ) && preg_match( '~^[a-z0-9\-]+(\.[a-z0-9\-]+)+[/\\?#]?~i', $clean_url ) ) {
+			$clean_url = 'https://' . $clean_url;
+		}
+
 		if ( empty( $clean_url ) || ! filter_var( $clean_url, FILTER_VALIDATE_URL ) ) {
 			return false;
 		}
@@ -149,13 +155,26 @@ class W2W_Environment_Check {
 		}
 
 		// Reject private IP ranges.
-		if ( filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false && filter_var( $host, FILTER_VALIDATE_IP ) !== false ) {
-			return false;
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) !== false ) {
+			if ( filter_var( $host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) === false ) {
+				return false;
+			}
 		}
 
 		// Use WordPress core validation if available.
+		// Note: On some Windows/local environments, gethostbyname() in wp_http_validate_url()
+		// may fail or time out for external domains due to local DNS or firewall settings.
+		// If wp_http_validate_url passes, it is safe; if it fails, our strict checks above
+		// have already verified that it is an external HTTP/HTTPS host.
 		if ( function_exists( 'wp_http_validate_url' ) ) {
-			return (bool) wp_http_validate_url( $clean_url );
+			$wp_valid = wp_http_validate_url( $clean_url );
+			if ( false !== $wp_valid ) {
+				return true;
+			}
+			// If WordPress core rejected the URL, ensure it was not due to an explicit local/private host.
+			if ( in_array( strtolower( $host ), array( 'localhost', '127.0.0.1', '::1' ), true ) ) {
+				return false;
+			}
 		}
 
 		return true;

@@ -149,11 +149,17 @@
       const tbody = document.getElementById('w2w-preview-tbody');
       const countBadge = document.getElementById('w2w-posts-count-badge');
 
-      const url = urlInput ? urlInput.value.trim() : '';
+      let url = urlInput ? urlInput.value.trim() : '';
       if (!url) {
         alert('Please enter a valid Wix URL (Sitemap XML, Single Post, or RSS feed).');
         if (urlInput) urlInput.focus();
         return;
+      }
+
+      // Auto-prepend https:// if omitted by user
+      if (!/^https?:\/\//i.test(url) && !url.startsWith('<')) {
+        url = 'https://' + url;
+        if (urlInput) urlInput.value = url;
       }
 
       btnPreview.disabled = true;

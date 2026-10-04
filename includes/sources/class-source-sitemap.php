@@ -77,6 +77,11 @@ class W2W_Source_Sitemap implements W2W_Source_Adapter_Interface {
 			return false !== strpos( $trimmed, '<urlset' ) || false !== strpos( $trimmed, '<sitemapindex' );
 		}
 
+		// Normalize URL if protocol was omitted.
+		if ( ! preg_match( '~^https?://~i', $trimmed ) && preg_match( '~^[a-z0-9\-]+(\.[a-z0-9\-]+)+[/\\?#]?~i', $trimmed ) ) {
+			$trimmed = 'https://' . $trimmed;
+		}
+
 		// Otherwise, validate as safe remote URL.
 		if ( ! filter_var( $trimmed, FILTER_VALIDATE_URL ) ) {
 			return false;
@@ -95,8 +100,17 @@ class W2W_Source_Sitemap implements W2W_Source_Adapter_Interface {
 	 * @throws \RuntimeException         When XML retrieval or parsing fails.
 	 */
 	public function fetch_posts( $input, array $args = array() ): array {
+		$trimmed = is_string( $input ) ? trim( $input ) : '';
+
+		if ( ! preg_match( '~^https?://~i', $trimmed ) && 0 !== strpos( $trimmed, '<' ) && preg_match( '~^[a-z0-9\-]+(\.[a-z0-9\-]+)+[/\\?#]?~i', $trimmed ) ) {
+			$trimmed = 'https://' . $trimmed;
+			$input   = $trimmed;
+		}
+
 		if ( ! $this->validate_source( $input ) ) {
-			throw new \InvalidArgumentException( 'Invalid sitemap URL or XML payload.' );
+			throw new \InvalidArgumentException(
+				__( 'Invalid sitemap URL or XML payload. Please ensure the URL includes https:// and points to a valid XML sitemap (e.g. https://yourdomain.com/blog-posts-sitemap.xml).', 'wix-to-wp-migrator' )
+			);
 		}
 
 		$xml_content = $this->get_xml_content( (string) $input );
