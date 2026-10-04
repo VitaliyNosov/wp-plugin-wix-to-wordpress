@@ -84,6 +84,19 @@ class W2W_Migration_Coordinator {
 	}
 
 	/**
+	 * Convenience method to process a single post with options array.
+	 *
+	 * @param W2W_Post_DTO         $dto      Input post DTO.
+	 * @param string|null          $batch_id Batch UUID.
+	 * @param array<string, mixed> $options  Options array (author_id, default_category, import_images).
+	 * @return array{success: bool, post_id: int|null, thumbnail_id: int|null, error: string|null}
+	 */
+	public function process_single_post( W2W_Post_DTO $dto, ?string $batch_id = null, array $options = array() ): array {
+		$author_id = isset( $options['author_id'] ) ? (int) $options['author_id'] : 1;
+		return $this->process_post( $dto, $author_id, $batch_id );
+	}
+
+	/**
 	 * Processes a single post DTO through the entire migration pipeline.
 	 *
 	 * @param W2W_Post_DTO $dto       Input post DTO.

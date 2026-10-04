@@ -138,4 +138,36 @@ class W2W_Rollback_Manager {
 			'total'       => $post_count + $attachment_count,
 		);
 	}
+
+	/**
+	 * Retrieves distinct recent migration batches from database.
+	 *
+	 * @param int $limit Max batches to return.
+	 * @return array<array{batch_id: string, count: int}>
+	 */
+	public function get_recent_batches( int $limit = 5 ): array {
+		global $wpdb;
+		if ( ! isset( $wpdb ) || ! is_object( $wpdb ) || ! isset( $wpdb->postmeta ) ) {
+			return array();
+		}
+
+		$results = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT meta_value as batch_id, COUNT(post_id) as item_count FROM {$wpdb->postmeta} WHERE meta_key = '_w2w_batch_id' GROUP BY meta_value ORDER BY post_id DESC LIMIT %d",
+				$limit
+			)
+		);
+
+		$batches = array();
+		if ( ! empty( $results ) ) {
+			foreach ( $results as $row ) {
+				$batches[] = array(
+					'batch_id'   => (string) $row->batch_id,
+					'item_count' => (int) $row->item_count,
+				);
+			}
+		}
+
+		return $batches;
+	}
 }

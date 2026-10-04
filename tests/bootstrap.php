@@ -30,6 +30,16 @@ if ( ! defined( 'W2W_PLUGIN_BASENAME' ) ) {
 	define( 'W2W_PLUGIN_BASENAME', 'wix-to-wp-plugin/wix-to-wp-migrator.php' );
 }
 
+if ( ! defined( 'MINUTE_IN_SECONDS' ) ) {
+	define( 'MINUTE_IN_SECONDS', 60 );
+}
+if ( ! defined( 'HOUR_IN_SECONDS' ) ) {
+	define( 'HOUR_IN_SECONDS', 60 * MINUTE_IN_SECONDS );
+}
+if ( ! defined( 'DAY_IN_SECONDS' ) ) {
+	define( 'DAY_IN_SECONDS', 24 * HOUR_IN_SECONDS );
+}
+
 // Global in-memory storage for WP mocks.
 global $w2w_test_db;
 $w2w_test_db = array(
@@ -500,7 +510,143 @@ if ( ! function_exists( 'get_posts' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wp_parse_url' ) ) {
+	function wp_parse_url( $url, $component = -1 ) {
+		return parse_url( $url, $component );
+	}
+}
+
+if ( ! function_exists( 'wp_strip_all_tags' ) ) {
+	function wp_strip_all_tags( $string, $remove_breaks = false ) {
+		$string = preg_replace( '@<(script|style)[^>]*?>.*?</\\1>@si', '', $string );
+		$string = strip_tags( $string );
+		if ( $remove_breaks ) {
+			$string = preg_replace( '/[\r\n\t ]+/', ' ', $string );
+		}
+		return trim( $string );
+	}
+}
+
+// -------------------------------------------------------------
+// AJAX & User Capability Mocks
+// -------------------------------------------------------------
+
+class W2W_Test_Ajax_Exception extends \Exception {
+	public $response;
+	public $status_code;
+
+	public function __construct( $response, $status_code = 200 ) {
+		$this->response    = $response;
+		$this->status_code = $status_code;
+		parent::__construct( is_array( $response ) ? json_encode( $response ) : (string) $response, $status_code );
+	}
+}
+
+global $w2w_test_current_user_id, $w2w_test_current_user_caps, $w2w_test_valid_nonces, $w2w_test_transients;
+$w2w_test_current_user_id  = 1;
+$w2w_test_current_user_caps = array( 'manage_options' => true );
+$w2w_test_valid_nonces     = array( 'w2w_admin_nonce' => true );
+$w2w_test_transients       = array();
+
+if ( ! function_exists( 'check_ajax_referer' ) ) {
+	function check_ajax_referer( $action = -1, $query_arg = false, $die = true ) {
+		global $w2w_test_valid_nonces;
+		$nonce = isset( $_REQUEST[ $query_arg ] ) ? $_REQUEST[ $query_arg ] : ( isset( $_REQUEST['_ajax_nonce'] ) ? $_REQUEST['_ajax_nonce'] : '' );
+		$valid = ! empty( $w2w_test_valid_nonces[ $action ] ) && 'valid_nonce' === $nonce;
+		if ( ! $valid && $die ) {
+			wp_send_json_error( array( 'message' => 'Invalid nonce' ), 403 );
+		}
+		return $valid;
+	}
+}
+
+if ( ! function_exists( 'wp_unslash' ) ) {
+	function wp_unslash( $value ) {
+		return is_array( $value ) ? array_map( 'wp_unslash', $value ) : stripslashes( $value );
+	}
+}
+
+if ( ! function_exists( 'current_user_can' ) ) {
+	function current_user_can( $capability, ...$args ) {
+		global $w2w_test_current_user_caps;
+		return ! empty( $w2w_test_current_user_caps[ $capability ] );
+	}
+}
+
+if ( ! function_exists( 'get_current_user_id' ) ) {
+	function get_current_user_id() {
+		global $w2w_test_current_user_id;
+		return $w2w_test_current_user_id ?? 1;
+	}
+}
+
+if ( ! function_exists( 'set_transient' ) ) {
+	function set_transient( $transient, $value, $expiration = 0 ) {
+		global $w2w_test_transients;
+		$w2w_test_transients[ $transient ] = $value;
+		return true;
+	}
+}
+
+if ( ! function_exists( 'get_transient' ) ) {
+	function get_transient( $transient ) {
+		global $w2w_test_transients;
+		return $w2w_test_transients[ $transient ] ?? false;
+	}
+}
+
+if ( ! function_exists( 'delete_transient' ) ) {
+	function delete_transient( $transient ) {
+		global $w2w_test_transients;
+		unset( $w2w_test_transients[ $transient ] );
+		return true;
+	}
+}
+
+if ( ! function_exists( 'wp_generate_uuid4' ) ) {
+	function wp_generate_uuid4() {
+		return sprintf(
+			'%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0x0fff ) | 0x4000,
+			mt_rand( 0, 0x3fff ) | 0x8000,
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff ),
+			mt_rand( 0, 0xffff )
+		);
+	}
+}
+
+if ( ! function_exists( 'get_permalink' ) ) {
+	function get_permalink( $post_id = 0 ) {
+		return 'http://example.org/?p=' . (int) $post_id;
+	}
+}
+
+if ( ! function_exists( 'wp_send_json_success' ) ) {
+	function wp_send_json_success( $data = null, $status_code = null, $options = 0 ) {
+		$response = array(
+			'success' => true,
+			'data'    => $data,
+		);
+		throw new W2W_Test_Ajax_Exception( $response, $status_code ?: 200 );
+	}
+}
+
+if ( ! function_exists( 'wp_send_json_error' ) ) {
+	function wp_send_json_error( $data = null, $status_code = null, $options = 0 ) {
+		$response = array(
+			'success' => false,
+			'data'    => $data,
+		);
+		throw new W2W_Test_Ajax_Exception( $response, $status_code ?: 400 );
+	}
+}
+
 // Load autoloader into the test harness.
 require_once dirname( __DIR__ ) . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'class-autoloader.php';
 W2W_Autoloader::register();
+
 

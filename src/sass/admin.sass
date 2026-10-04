@@ -12,21 +12,58 @@
   font-family: $font-family-base
   color: $color-text-main
 
-  h1.w2w-title
-    display: flex
-    align-items: center
-    gap: $spacing-sm
-    font-size: $font-size-xl
-    margin-bottom: $spacing-md
+// Header & Branding
+.w2w-admin-header
+  margin-bottom: $spacing-lg
 
-  .w2w-badge-version
-    font-size: $font-size-sm
-    font-weight: 500
-    color: $color-primary
-    background: $color-info-bg
-    border: 1px solid $color-border-subtle
-    padding: $spacing-xxs $spacing-sm
-    border-radius: $radius-sm
+.w2w-header-brand
+  display: flex
+  align-items: center
+  gap: $spacing-sm
+  margin-bottom: $spacing-xs
+
+  h1
+    margin: 0
+    font-size: $font-size-xl
+    font-weight: 600
+    line-height: 1.3
+
+.w2w-brand-icon
+  font-size: 32px
+  width: 32px
+  height: 32px
+  color: $color-primary
+
+.w2w-version-badge
+  display: inline-block
+  font-size: $font-size-sm
+  font-weight: 600
+  color: $color-primary
+  background: $color-info-bg
+  border: 1px solid $color-border-subtle
+  padding: $spacing-xxs $spacing-sm
+  border-radius: $radius-sm
+  margin-left: $spacing-xs
+  vertical-align: middle
+
+.w2w-header-description
+  font-size: $font-size-md
+  color: $color-text-muted
+  margin: $spacing-xs 0 0 0
+
+// Tab Navigation
+.nav-tab-wrapper
+  margin-bottom: $spacing-lg
+
+  .nav-tab
+    display: inline-flex
+    align-items: center
+    gap: $spacing-xs
+
+    .dashicons
+      font-size: 16px
+      width: 16px
+      height: 16px
 
 // Cards and Containers
 .w2w-card
@@ -37,100 +74,264 @@
   margin-bottom: $spacing-lg
   box-shadow: $shadow-card
 
-  &__header
-    border-bottom: 1px solid $color-border-subtle
-    padding-bottom: $spacing-sm
-    margin-bottom: $spacing-md
+.w2w-card-title
+  display: flex
+  align-items: center
+  gap: $spacing-sm
+  font-size: $font-size-lg
+  font-weight: 600
+  margin: 0 0 $spacing-xs 0
+  color: $color-text-main
 
-    h2
-      font-size: $font-size-lg
-      margin: 0
-      color: $color-text-main
+  .dashicons
+    color: $color-primary
 
-// Environment Health Check Grid
-.w2w-health-grid
-  display: grid
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr))
-  gap: $spacing-md
-  margin-top: $spacing-md
-
-.w2w-health-item
+.w2w-card-header-flex
   display: flex
   align-items: center
   justify-content: space-between
-  padding: $spacing-sm $spacing-md
+  flex-wrap: wrap
+  gap: $spacing-md
+  margin-bottom: $spacing-md
+
+// Badges and Status Pills
+.w2w-badge
+  display: inline-block
+  font-size: $font-size-sm
+  font-weight: 600
+  padding: $spacing-xxs $spacing-sm
   border-radius: $radius-sm
-  border: 1px solid $color-border-subtle
-  background: $color-background
 
-  &--passed
-    border-left: 4px solid $color-success
+  &-info
+    color: $color-primary
+    background: $color-info-bg
+    border: 1px solid $color-info
 
-  &--failed
-    border-left: 4px solid $color-error
+  &-success
+    color: $color-success
+    background: $color-success-bg
+    border: 1px solid $color-success
 
-  &__label
-    font-weight: 600
-    font-size: $font-size-base
+  &-danger
+    color: $color-error
+    background: $color-error-bg
+    border: 1px solid $color-error
 
-  &__status
-    font-size: $font-size-sm
+  &-neutral
+    color: $color-badge-neutral-text
+    background: $color-badge-neutral-bg
+    border: 1px solid $color-border
+
+.w2w-status-pill
+  display: inline-flex
+  align-items: center
+  gap: $spacing-xs
+  font-size: $font-size-sm
+  font-weight: 600
+  padding: $spacing-xxs $spacing-sm
+  border-radius: 12px
+
+  .dashicons
+    font-size: 14px
+    width: 14px
+    height: 14px
+
+  &.w2w-status-passed
+    color: $color-success
+    background: $color-success-bg
+
+  &.w2w-status-warning
+    color: $color-warning
+    background: $color-warning-bg
+
+  &.w2w-status-failed
+    color: $color-error
+    background: $color-error-bg
+
+// Preview Table
+.w2w-table-scroll-container
+  max-height: 420px
+  overflow-y: auto
+  border: 1px solid $color-border
+  border-radius: $radius-sm
+  margin: $spacing-md 0
+
+.w2w-preview-table
+  margin: 0
+  border: none
+
+  th, td
+    vertical-align: middle
+
+  .w2w-thumb-img
+    width: 48px
+    height: 48px
+    object-fit: cover
+    border-radius: $radius-sm
+    border: 1px solid $color-border-subtle
+    display: block
+
+  .w2w-thumb-placeholder
+    width: 48px
+    height: 48px
+    background: $color-background
+    border: 1px dashed $color-border
+    border-radius: $radius-sm
+    display: flex
+    align-items: center
+    justify-content: center
+    color: $color-text-muted
+
+.w2w-table-actions
+  display: flex
+  gap: $spacing-xs
+
+// Migration Controls
+.w2w-migration-controls
+  display: flex
+  align-items: center
+  justify-content: space-between
+  flex-wrap: wrap
+  gap: $spacing-md
+  margin-top: $spacing-md
+  padding-top: $spacing-md
+  border-top: 1px solid $color-border-subtle
+
+.w2w-batch-options
+  display: flex
+  align-items: center
+  gap: $spacing-sm
 
 // Progress Bar
-.w2w-progress
-  margin-top: $spacing-md
+.w2w-progress-container
+  width: 100%
+  height: 28px
+  background: $color-background
+  border: 1px solid $color-border
+  border-radius: $radius-md
+  overflow: hidden
+  margin: $spacing-md 0
+  position: relative
 
-  &__track
-    width: 100%
-    height: 20px
-    background: $color-background
-    border: 1px solid $color-border
-    border-radius: $radius-sm
-    overflow: hidden
-    position: relative
+.w2w-progress-bar
+  height: 100%
+  background-color: $color-primary
+  background-image: linear-gradient(45deg, $color-progress-stripe 25%, transparent 25%, transparent 50%, $color-progress-stripe 50%, $color-progress-stripe 75%, transparent 75%, transparent)
+  background-size: 28px 28px
+  transition: width 0.3s ease
+  display: flex
+  align-items: center
+  justify-content: center
+  min-width: 32px
 
-  &__bar
-    height: 100%
-    width: 0%
-    background: $color-primary
-    transition: width 0.3s ease
+.w2w-progress-text
+  color: $color-card-bg
+  font-size: $font-size-sm
+  font-weight: 700
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4)
 
-  &__label
-    margin-top: $spacing-xs
+// Real-Time Stats Grid
+.w2w-stats-grid
+  display: grid
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr))
+  gap: $spacing-md
+  margin: $spacing-md 0
+
+.w2w-stat-box
+  background: $color-background
+  border: 1px solid $color-border-subtle
+  border-radius: $radius-sm
+  padding: $spacing-md
+  text-align: center
+
+  .w2w-stat-number
+    display: block
+    font-size: 24px
+    font-weight: 700
+    color: $color-text-main
+    line-height: 1.2
+
+  .w2w-stat-label
+    display: block
     font-size: $font-size-sm
     color: $color-text-muted
-    display: flex
-    justify-content: space-between
+    margin-top: $spacing-xs
 
-// Log Console Box
-.w2w-log-box
-  background: $color-text-main
-  color: $color-background
-  font-family: monospace
+  &.w2w-stat-success .w2w-stat-number
+    color: $color-success
+
+  &.w2w-stat-failed .w2w-stat-number
+    color: $color-error
+
+.w2w-runner-actions
+  display: flex
+  align-items: center
+  gap: $spacing-sm
+  margin: $spacing-md 0
+
+// Activity Stream & Terminal
+.w2w-activity-log
+  margin-top: $spacing-md
+
+  h3
+    margin-bottom: $spacing-xs
+
+.w2w-log-stream
+  background: $color-terminal-bg
+  color: $color-terminal-line
+  font-family: $font-family-mono
   font-size: $font-size-sm
   padding: $spacing-md
   border-radius: $radius-sm
-  max-height: 240px
+  max-height: 200px
   overflow-y: auto
-  margin-top: $spacing-md
 
-  .log-line
-    margin: 0 0 $spacing-xxs 0
-    line-height: 1.4
+.w2w-log-line
+  line-height: 1.5
+  margin-bottom: $spacing-xxs
 
-    &--info
-      color: $color-info-bg
+  &.w2w-log-info
+    color: $color-terminal-text
 
-    &--warning
-      color: $color-warning
+  &.w2w-log-warn
+    color: $color-warning
 
-    &--error
-      color: $color-error-bg
+  &.w2w-log-error
+    color: $color-error-bg
 
-// Table Thumbnail Preview
-.w2w-thumb-preview
-  width: 50px
-  height: 50px
-  object-fit: cover
+.w2w-terminal
+  background: $color-terminal-bg
+  color: $color-terminal-line
+  font-family: $font-family-mono
+  font-size: $font-size-sm
+  padding: $spacing-md
   border-radius: $radius-sm
+  max-height: 480px
+  overflow-y: auto
+
+.w2w-terminal-line
+  line-height: 1.6
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05)
+  padding: $spacing-xxs 0
+
+.w2w-terminal-empty
+  color: $color-terminal-dim
+  font-style: italic
+
+// Code Block Display Sections
+.w2w-code-block-section
+  background: $color-background
   border: 1px solid $color-border-subtle
+  border-radius: $radius-sm
+  padding: $spacing-md
+
+  h3
+    margin: 0
+    font-size: $font-size-md
+
+  textarea
+    margin-top: $spacing-sm
+    width: 100%
+    font-family: $font-family-mono
+    font-size: $font-size-sm
+    background: $color-card-bg

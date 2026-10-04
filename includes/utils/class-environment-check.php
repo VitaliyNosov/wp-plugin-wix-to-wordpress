@@ -160,4 +160,15 @@ class W2W_Environment_Check {
 
 		return true;
 	}
+
+	/**
+	 * Static helper to validate a safe URL against SSRF attacks.
+	 *
+	 * @param string $url Source URL string.
+	 * @return bool True if safe, false otherwise.
+	 */
+	public static function validate_safe_url( string $url ): bool {
+		$instance = new self();
+		return $instance->validate_source_url( $url );
+	}
 }

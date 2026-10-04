@@ -34,6 +34,10 @@ class W2W_Source_Manager {
 	 * @return void
 	 */
 	private function register_default_adapters(): void {
+		if ( class_exists( 'W2W_Source_RSS' ) ) {
+			$this->register_adapter( new W2W_Source_RSS() );
+		}
+
 		/**
 		 * Hook to allow early registration of source adapters.
 		 *

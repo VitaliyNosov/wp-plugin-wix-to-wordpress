@@ -27,7 +27,7 @@ class W2W_Content_Processor {
 	 * @param string $url Dynamic Wix CDN image URL.
 	 * @return string Full-resolution original image URL.
 	 */
-	public function normalize_wix_image_url( string $url ): string {
+	public static function normalize_wix_image_url( string $url ): string {
 		$url = trim( $url );
 		if ( empty( $url ) ) {
 			return '';
