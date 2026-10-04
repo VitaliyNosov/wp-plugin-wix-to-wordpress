@@ -115,7 +115,106 @@ class W2W_Source_Sitemap implements W2W_Source_Adapter_Interface {
 
 		$xml_content = $this->get_xml_content( (string) $input );
 
-		return $this->parse_sitemap_xml( $xml_content, $args );
+		$posts = $this->parse_sitemap_xml( $xml_content, $args );
+
+		// If input is a remote URL, attempt fast category/author enrichment from the domain's blog-feed.xml
+		if ( 0 !== strpos( $trimmed, '<' ) ) {
+			$posts = $this->enrich_posts_from_feed( $posts, $trimmed );
+		}
+
+		return $posts;
+	}
+
+	/**
+	 * Fast, non-blocking check of the site's blog-feed.xml to pre-populate categories
+	 * and author names for matching posts in the sitemap during preview.
+	 *
+	 * @param array<W2W_Post_DTO> $posts       Parsed sitemap post DTOs.
+	 * @param string              $sitemap_url Source sitemap URL.
+	 * @return array<W2W_Post_DTO>
+	 */
+	protected function enrich_posts_from_feed( array $posts, string $sitemap_url ): array {
+		$parsed = wp_parse_url( $sitemap_url );
+		if ( empty( $parsed['scheme'] ) || empty( $parsed['host'] ) ) {
+			return $posts;
+		}
+
+		$feed_url = $parsed['scheme'] . '://' . $parsed['host'] . '/blog-feed.xml';
+
+		$response = wp_remote_get(
+			$feed_url,
+			array(
+				'timeout'     => 4,
+				'redirection' => 3,
+				'user-agent'  => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+			)
+		);
+
+		if ( is_wp_error( $response ) || 200 !== (int) wp_remote_retrieve_response_code( $response ) ) {
+			return $posts;
+		}
+
+		$feed_body = wp_remote_retrieve_body( $response );
+		if ( empty( $feed_body ) ) {
+			return $posts;
+		}
+
+		$prev = libxml_use_internal_errors( true );
+		$xml  = simplexml_load_string( $feed_body, 'SimpleXMLElement', LIBXML_NOCDATA );
+		libxml_use_internal_errors( $prev );
+
+		if ( false === $xml || ! isset( $xml->channel->item ) ) {
+			return $posts;
+		}
+
+		$category_map = array();
+		$author_map   = array();
+		$dc_ns        = 'http://purl.org/dc/elements/1.1/';
+
+		foreach ( $xml->channel->item as $item ) {
+			$link = (string) $item->link;
+			$slug = sanitize_title( basename( (string) wp_parse_url( $link, PHP_URL_PATH ) ) );
+			if ( empty( $slug ) ) {
+				continue;
+			}
+
+			$cats = array();
+			if ( isset( $item->category ) ) {
+				foreach ( $item->category as $c ) {
+					$cat_name = trim( (string) $c );
+					if ( ! empty( $cat_name ) ) {
+						$cats[] = $cat_name;
+					}
+				}
+			}
+			if ( ! empty( $cats ) ) {
+				$category_map[ $slug ] = array_values( array_unique( $cats ) );
+			}
+
+			$author = '';
+			if ( isset( $item->children( $dc_ns )->creator ) ) {
+				$author = trim( (string) $item->children( $dc_ns )->creator );
+			}
+			if ( empty( $author ) && isset( $item->author ) ) {
+				$author = trim( (string) $item->author );
+			}
+			if ( ! empty( $author ) ) {
+				$author_map[ $slug ] = $author;
+			}
+		}
+
+		foreach ( $posts as $dto ) {
+			if ( ! empty( $dto->slug ) ) {
+				if ( empty( $dto->categories ) && isset( $category_map[ $dto->slug ] ) ) {
+					$dto->categories = $category_map[ $dto->slug ];
+				}
+				if ( ( empty( $dto->author_name ) || 'Author from Wix' === $dto->author_name ) && isset( $author_map[ $dto->slug ] ) ) {
+					$dto->author_name = $author_map[ $dto->slug ];
+				}
+			}
+		}
+
+		return $posts;
 	}
 
 	/**

@@ -196,9 +196,17 @@
               ? `<img src="${post.featured_image_url}" class="w2w-thumb-img" alt="" />`
               : `<div class="w2w-thumb-placeholder"><span class="dashicons dashicons-format-image"></span></div>`;
 
-            const categoriesHtml = (post.categories || [])
+            let categoriesHtml = (post.categories || [])
               .map((c) => `<span class="w2w-badge w2w-badge-neutral">${c}</span>`)
               .join(' ');
+
+            if (!categoriesHtml) {
+              if (data.source_type === 'sitemap') {
+                categoriesHtml = '<span class="w2w-badge w2w-badge-info" style="font-size: 11px; opacity: 0.9;" title="Wix sitemaps list URLs without category tags. Categories are automatically scraped and created during import.">Auto-detect on import</span>';
+              } else {
+                categoriesHtml = '<span class="description">—</span>';
+              }
+            }
 
             tr.innerHTML = `
               <th scope="row" class="check-column">
@@ -212,7 +220,7 @@
                   ${post.slug ? ` | <code>/${post.slug}</code>` : ''}
                 </div>
               </td>
-              <td>${categoriesHtml || '<span class="description">—</span>'}</td>
+              <td>${categoriesHtml}</td>
               <td>${post.author_name || '—'}</td>
               <td>${post.date_published ? post.date_published.split(' ')[0] : '—'}</td>
             `;
