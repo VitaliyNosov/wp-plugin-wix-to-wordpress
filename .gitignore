@@ -1,0 +1,15 @@
+# Documentation (stored locally only)
+/docs/
+
+# Dependencies
+node_modules/
+vendor/
+
+# Logs
+*.log
+
+# OS & Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
