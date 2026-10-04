@@ -270,11 +270,22 @@ class W2W_Ajax_Handler {
 							if ( ! empty( $scraped_dto->seo_meta ) ) {
 								$dto->seo_meta = $scraped_dto->seo_meta;
 							}
+							if ( ! empty( $scraped_dto->categories ) ) {
+								$dto->categories = $scraped_dto->categories;
+							}
+							if ( ! empty( $scraped_dto->tags ) ) {
+								$dto->tags = $scraped_dto->tags;
+							}
 						}
 					}
 				} catch ( \Throwable $e ) {
 					$this->logger->warning( 'Lazy scrape failed for post: ' . $dto->original_url, array( 'error' => $e->getMessage() ) );
 				}
+			}
+
+			// Apply fallback default category if post has no categories.
+			if ( empty( $dto->categories ) && ! empty( $default_cat ) ) {
+				$dto->categories = array( $default_cat );
 			}
 
 			$result    = $this->coordinator->process_single_post( $dto, $batch_id, $options );

@@ -48,6 +48,8 @@ class W2W_Test_Source_Scraper {
         <h1>What to Pack for 3 Days in Vegas: Ultimate Outfit Guide</h1>
       </div>
       <div class="NtBDdE"><span>By Naureen Chhipa</span></div>
+      <section><ul aria-label="Post categories"><li><a href="https://www.wheretonau.com/blog/categories/lifestyle">Lifestyle</a></li><li><a href="https://www.wheretonau.com/blog/categories/travel">Travel</a></li></ul></section>
+      <section><ul aria-label="Post tags"><li><a href="https://www.wheretonau.com/blog/tags/vegas">Vegas</a></li></ul></section>
       <p>Putting together the perfect packing list for 3 days in Las Vegas is half the fun!</p>
       <wow-image data-image-info='{"imageData":{"uri":"a5b892_casino_walk~mv2.jpg","alt":"Vegas Strip Walk"}}'>
         <img alt="Vegas Strip Walk" />
@@ -96,6 +98,10 @@ HTML;
 		w2w_assert_equals( 'https://www.wheretonau.com/post/packing-list-for-las-vegas-vegas-outfits', $dto->original_url, 'Original URL must match.' );
 		w2w_assert_equals( 'Naureen Chhipa', $dto->author_name, 'Author must be extracted from JSON-LD.' );
 		w2w_assert_equals( '2026-07-19 19:32:30', $dto->date_published, 'Publication date must be formatted to MySQL datetime.' );
+
+		// Categories and Tags:
+		w2w_assert_equals( array( 'Lifestyle', 'Travel' ), $dto->categories, 'Categories must be extracted from post categories section.' );
+		w2w_assert_equals( array( 'Vegas' ), $dto->tags, 'Tags must be extracted from post tags section.' );
 
 		// Image normalization:
 		w2w_assert_equals(

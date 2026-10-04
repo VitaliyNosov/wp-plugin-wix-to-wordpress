@@ -249,7 +249,11 @@ class W2W_Source_Scraper implements W2W_Source_Adapter_Interface {
 		// 8. Extract & Clean Article Body Content.
 		$content = $this->extract_article_body( $html );
 
-		// 9. SEO Metadata.
+		// 9. Extract Categories and Tags.
+		$categories = $this->extract_categories( $html, $json_ld );
+		$tags       = $this->extract_tags( $html, $json_ld );
+
+		// 10. SEO Metadata.
 		$seo_meta = array(
 			'meta_title'       => $title,
 			'meta_description' => $json_ld['description'] ?? '',
@@ -265,8 +269,8 @@ class W2W_Source_Scraper implements W2W_Source_Adapter_Interface {
 			$slug,
 			$original_url,
 			$featured_image_url,
-			array(), // Categories will be resolved or set in UI.
-			array(),
+			$categories,
+			$tags,
 			$author_name,
 			$seo_meta,
 			$date_published,
@@ -274,6 +278,123 @@ class W2W_Source_Scraper implements W2W_Source_Adapter_Interface {
 		);
 
 		return $dto->validate() ? $dto : null;
+	}
+
+	/**
+	 * Extracts category names from Wix HTML and JSON-LD metadata.
+	 *
+	 * @param string               $html    Full HTML document.
+	 * @param array<string, mixed> $json_ld Pre-parsed JSON-LD data.
+	 * @return array<string> Array of sanitized category names.
+	 */
+	public function extract_categories( string $html, array $json_ld = array() ): array {
+		$categories = array();
+
+		// 1. Wix explicit post categories list: aria-label="Post categories"
+		if ( preg_match( '~<ul[^>]*aria-label=["\']Post categories["\'][^>]*>(.*?)</ul>~is', $html, $m ) ) {
+			if ( preg_match_all( '~<a[^>]*>([^<]+)</a>~i', $m[1], $link_matches ) ) {
+				foreach ( $link_matches[1] as $cat ) {
+					$clean = trim( html_entity_decode( $cat, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+					if ( ! empty( $clean ) ) {
+						$categories[] = $clean;
+					}
+				}
+			}
+		}
+
+		// 2. OpenGraph article:section
+		if ( preg_match_all( '~<meta[^>]*property=["\']article:section["\'][^>]*content=["\']([^"\']+)["\']~i', $html, $m ) ) {
+			foreach ( $m[1] as $cat ) {
+				$clean = trim( html_entity_decode( $cat, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+				if ( ! empty( $clean ) ) {
+					$categories[] = $clean;
+				}
+			}
+		}
+
+		// 3. Schema.org JSON-LD articleSection
+		if ( ! empty( $json_ld['articleSection'] ) ) {
+			$sections = is_array( $json_ld['articleSection'] ) ? $json_ld['articleSection'] : array( $json_ld['articleSection'] );
+			foreach ( $sections as $s ) {
+				$clean = trim( (string) $s );
+				if ( ! empty( $clean ) ) {
+					$categories[] = $clean;
+				}
+			}
+		}
+
+		// 4. Wix /blog/categories/ links outside header navigation
+		if ( empty( $categories ) ) {
+			if ( preg_match_all( '~<a[^>]*href=["\'][^"\']*/blog/categories/([^"\'/?#]+)["\'][^>]*>([^<]+)</a>~i', $html, $m, PREG_SET_ORDER ) ) {
+				foreach ( $m as $match ) {
+					if ( false !== stripos( $match[0], 'header-navigation' ) ) {
+						continue;
+					}
+					$clean = trim( html_entity_decode( $match[2], ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+					if ( ! empty( $clean ) && ! in_array( $clean, $categories, true ) ) {
+						$categories[] = $clean;
+					}
+				}
+			}
+		}
+
+		return array_values( array_unique( $categories ) );
+	}
+
+	/**
+	 * Extracts tag names from Wix HTML and JSON-LD metadata.
+	 *
+	 * @param string               $html    Full HTML document.
+	 * @param array<string, mixed> $json_ld Pre-parsed JSON-LD data.
+	 * @return array<string> Array of sanitized tag names.
+	 */
+	public function extract_tags( string $html, array $json_ld = array() ): array {
+		$tags = array();
+
+		// 1. Wix explicit post tags list: aria-label="Post tags"
+		if ( preg_match( '~<ul[^>]*aria-label=["\']Post tags["\'][^>]*>(.*?)</ul>~is', $html, $m ) ) {
+			if ( preg_match_all( '~<a[^>]*>([^<]+)</a>~i', $m[1], $link_matches ) ) {
+				foreach ( $link_matches[1] as $tag ) {
+					$clean = trim( html_entity_decode( $tag, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+					if ( ! empty( $clean ) ) {
+						$tags[] = $clean;
+					}
+				}
+			}
+		}
+
+		// 2. OpenGraph article:tag
+		if ( preg_match_all( '~<meta[^>]*property=["\']article:tag["\'][^>]*content=["\']([^"\']+)["\']~i', $html, $m ) ) {
+			foreach ( $m[1] as $tag ) {
+				$clean = trim( html_entity_decode( $tag, ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+				if ( ! empty( $clean ) ) {
+					$tags[] = $clean;
+				}
+			}
+		}
+
+		// 3. Schema.org keywords
+		if ( ! empty( $json_ld['keywords'] ) ) {
+			$raw_kws = is_array( $json_ld['keywords'] ) ? $json_ld['keywords'] : explode( ',', (string) $json_ld['keywords'] );
+			foreach ( $raw_kws as $kw ) {
+				$clean = trim( (string) $kw );
+				if ( ! empty( $clean ) ) {
+					$tags[] = $clean;
+				}
+			}
+		}
+
+		// 4. Wix /blog/tags/ links
+		if ( preg_match_all( '~<a[^>]*href=["\'][^"\']*/blog/tags/([^"\'/?#]+)["\'][^>]*>([^<]+)</a>~i', $html, $m, PREG_SET_ORDER ) ) {
+			foreach ( $m as $match ) {
+				$clean = trim( html_entity_decode( $match[2], ENT_QUOTES | ENT_HTML5, 'UTF-8' ) );
+				if ( ! empty( $clean ) && ! in_array( $clean, $tags, true ) ) {
+					$tags[] = $clean;
+				}
+			}
+		}
+
+		return array_values( array_unique( $tags ) );
 	}
 
 	/**

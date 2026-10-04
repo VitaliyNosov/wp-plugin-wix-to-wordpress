@@ -93,6 +93,11 @@ class W2W_Migration_Coordinator {
 	 */
 	public function process_single_post( W2W_Post_DTO $dto, ?string $batch_id = null, array $options = array() ): array {
 		$author_id = isset( $options['author_id'] ) ? (int) $options['author_id'] : 1;
+
+		if ( empty( $dto->categories ) && ! empty( $options['default_category'] ) ) {
+			$dto->categories = array( (string) $options['default_category'] );
+		}
+
 		return $this->process_post( $dto, $author_id, $batch_id );
 	}
 

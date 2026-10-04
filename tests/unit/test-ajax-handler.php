@@ -143,6 +143,11 @@ XML;
 		w2w_assert_equals( 1, $chunk1_response['data']['chunk_count'], 'Chunk 1 count must be 1.' );
 		w2w_assert_true( $chunk1_response['data']['results'][0]['success'], 'First item import must be marked successful.' );
 
+		$imported_post_id = $chunk1_response['data']['results'][0]['post_id'];
+		$assigned_terms   = wp_get_post_terms( $imported_post_id, 'category' );
+		w2w_assert_true( ! empty( $assigned_terms ), 'Imported post must have categories assigned.' );
+		w2w_assert_equals( 'Cosmetic', $assigned_terms[0]->name, 'Category name must match Wix category.' );
+
 		// Import Chunk 2 (Second post: index 1).
 		$_POST['indices'] = array( 1 );
 		$chunk2_response  = null;
