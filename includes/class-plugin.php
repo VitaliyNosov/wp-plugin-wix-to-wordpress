@@ -83,6 +83,11 @@ final class W2W_Plugin {
 	private function init_hooks(): void {
 		add_action( 'plugins_loaded', array( $this, 'load_textdomain' ) );
 		add_action( 'init', array( $this, 'init' ) );
+
+		if ( is_admin() ) {
+			new W2W_Admin();
+			new W2W_Ajax_Handler( $this->get_source_manager(), null, null, $this->get_logger() );
+		}
 	}
 
 	/**
@@ -104,11 +109,6 @@ final class W2W_Plugin {
 	 * @return void
 	 */
 	public function init(): void {
-		if ( is_admin() ) {
-			new W2W_Admin();
-			new W2W_Ajax_Handler( $this->get_source_manager(), null, null, $this->get_logger() );
-		}
-
 		/**
 		 * Action triggered when Wix to WordPress Migrator initializes.
 		 *
