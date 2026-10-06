@@ -170,6 +170,18 @@ if ( ! function_exists( 'esc_url_raw' ) ) {
 	}
 }
 
+if ( ! function_exists( 'untrailingslashit' ) ) {
+	function untrailingslashit( $string ) {
+		return rtrim( (string) $string, '/\\' );
+	}
+}
+
+if ( ! function_exists( 'trailingslashit' ) ) {
+	function trailingslashit( $string ) {
+		return untrailingslashit( $string ) . '/';
+	}
+}
+
 if ( ! function_exists( 'sanitize_text_field' ) ) {
 	function sanitize_text_field( $str ) {
 		return trim( strip_tags( (string) $str ) );
@@ -490,9 +502,18 @@ if ( ! function_exists( 'get_posts' ) ) {
 		$post_type  = $args['post_type'] ?? 'post';
 		$meta_key   = $args['meta_key'] ?? '';
 		$meta_value = $args['meta_value'] ?? null;
+		$name       = $args['name'] ?? null;
+		$title      = $args['title'] ?? null;
+		$fields     = $args['fields'] ?? '';
 
 		foreach ( $w2w_test_db['posts'] as $id => $post ) {
-			if ( $post_type && $post['post_type'] !== $post_type ) {
+			if ( $post_type && 'any' !== $post_type && $post['post_type'] !== $post_type ) {
+				continue;
+			}
+			if ( ! empty( $name ) && ( $post['post_name'] ?? '' ) !== $name ) {
+				continue;
+			}
+			if ( ! empty( $title ) && ( $post['post_title'] ?? '' ) !== $title ) {
 				continue;
 			}
 			if ( ! empty( $meta_key ) ) {
@@ -504,7 +525,7 @@ if ( ! function_exists( 'get_posts' ) ) {
 					continue;
 				}
 			}
-			$results[] = (object) $post;
+			$results[] = ( 'ids' === $fields ) ? (int) $id : (object) $post;
 		}
 		return $results;
 	}

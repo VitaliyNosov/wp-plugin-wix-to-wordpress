@@ -69,7 +69,7 @@ class W2W_Media_Downloader {
 			return null;
 		}
 
-		if ( function_exists( 'wp_http_validate_url' ) && ! wp_http_validate_url( $normalized_url ) ) {
+		if ( ! W2W_Environment_Check::validate_safe_url( $normalized_url ) ) {
 			return null;
 		}
 
@@ -165,16 +165,22 @@ class W2W_Media_Downloader {
 	public function find_existing_by_url( string $source_url ): ?int {
 		$posts = get_posts(
 			array(
-				'post_type'      => 'attachment',
-				'post_status'    => 'inherit',
-				'meta_key'       => '_w2w_source_media_url',
-				'meta_value'     => $source_url,
-				'posts_per_page' => 1,
-				'fields'         => 'ids',
+				'post_type'        => 'attachment',
+				'post_status'      => 'inherit',
+				'meta_key'         => '_w2w_source_media_url',
+				'meta_value'       => $source_url,
+				'posts_per_page'   => 1,
+				'fields'           => 'ids',
+				'suppress_filters' => true,
 			)
 		);
 
-		return ! empty( $posts ) ? (int) $posts[0]->ID : null;
+		if ( empty( $posts ) ) {
+			return null;
+		}
+
+		$first = $posts[0];
+		return is_object( $first ) ? (int) $first->ID : (int) $first;
 	}
 
 	/**
@@ -186,15 +192,21 @@ class W2W_Media_Downloader {
 	public function find_existing_by_hash( string $hash ): ?int {
 		$posts = get_posts(
 			array(
-				'post_type'      => 'attachment',
-				'post_status'    => 'inherit',
-				'meta_key'       => '_w2w_media_hash',
-				'meta_value'     => $hash,
-				'posts_per_page' => 1,
-				'fields'         => 'ids',
+				'post_type'        => 'attachment',
+				'post_status'      => 'inherit',
+				'meta_key'         => '_w2w_media_hash',
+				'meta_value'       => $hash,
+				'posts_per_page'   => 1,
+				'fields'           => 'ids',
+				'suppress_filters' => true,
 			)
 		);
 
-		return ! empty( $posts ) ? (int) $posts[0]->ID : null;
+		if ( empty( $posts ) ) {
+			return null;
+		}
+
+		$first = $posts[0];
+		return is_object( $first ) ? (int) $first->ID : (int) $first;
 	}
 }

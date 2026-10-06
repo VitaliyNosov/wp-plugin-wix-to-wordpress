@@ -465,7 +465,7 @@ class W2W_Source_Scraper implements W2W_Source_Adapter_Interface {
 					$uri = $info['imageData']['uri'];
 					$src = 'https://static.wixstatic.com/media/' . $uri;
 					$alt = esc_attr( $info['imageData']['alt'] ?? '' );
-					return sprintf( '<p><img src="%s" alt="%s" class="aligncenter size-full" /></p>', esc_url( $src ), $alt );
+					return sprintf( '<figure class="wp-block-image size-full"><img src="%s" alt="%s" class="aligncenter size-full" style="max-width: 100%%; height: auto;" /></figure>', esc_url( $src ), $alt );
 				}
 				return '';
 			},

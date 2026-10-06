@@ -148,8 +148,8 @@ XML;
 		w2w_assert_true( ! empty( $assigned_terms ), 'Imported post must have categories assigned.' );
 		w2w_assert_equals( 'Cosmetic', $assigned_terms[0]->name, 'Category name must match Wix category.' );
 
-		// Import Chunk 2 (Second post: index 1).
-		$_POST['indices'] = array( 1 );
+		// Import Chunk 2: Send indices as JSON string "[1]" (matching client-side JSON.stringify format).
+		$_POST['indices'] = '[1]';
 		$chunk2_response  = null;
 		try {
 			$handler->ajax_import_chunk();
@@ -159,6 +159,27 @@ XML;
 
 		w2w_assert_not_null( $chunk2_response, 'Chunk 2 must return a response.' );
 		w2w_assert_true( $chunk2_response['success'], 'Chunk 2 import must succeed.' );
+		w2w_assert_equals( 1, $chunk2_response['data']['chunk_count'], 'Chunk 2 count must be 1.' );
+		w2w_assert_true( $chunk2_response['data']['results'][0]['success'], 'Chunk 2 item must succeed.' );
+
+		$second_post_id = $chunk2_response['data']['results'][0]['post_id'];
+		$second_post    = get_post( $second_post_id );
+		w2w_assert_equals(
+			'Preventing Cavities in Children',
+			$second_post->post_title,
+			'Chunk 2 with JSON index "[1]" must import post index 1, NOT duplicate post index 0!'
+		);
+
+		// Import Chunk 3: Test comma-separated string format "0, 1"
+		$_POST['indices'] = '0, 1';
+		$chunk3_response  = null;
+		try {
+			$handler->ajax_import_chunk();
+		} catch ( W2W_Test_Ajax_Exception $e ) {
+			$chunk3_response = $e->response;
+		}
+		w2w_assert_not_null( $chunk3_response, 'Chunk 3 with comma string must return response.' );
+		w2w_assert_equals( 2, $chunk3_response['data']['chunk_count'], 'Chunk 3 must process both 2 indices.' );
 
 		// -------------------------------------------------------------
 		// 5. Rollback Inspection: ajax_check_rollback

@@ -141,7 +141,10 @@ class W2W_Migration_Coordinator {
 					: "http://example.org/wp-content/uploads/imported-{$attachment_id}.jpg";
 
 				if ( $local_url ) {
-					$url_mapping[ $img_url ] = $local_url;
+					$url_mapping[ $img_url ] = array(
+						'url'           => $local_url,
+						'attachment_id' => $attachment_id,
+					);
 				}
 			}
 		}
@@ -177,6 +180,8 @@ class W2W_Migration_Coordinator {
 			return array(
 				'success'      => false,
 				'post_id'      => null,
+				'title'        => $dto->title,
+				'media_count'  => 0,
 				'thumbnail_id' => $thumbnail_id,
 				'error'        => $e->getMessage(),
 			);
@@ -195,6 +200,8 @@ class W2W_Migration_Coordinator {
 		return array(
 			'success'      => true,
 			'post_id'      => $post_id,
+			'title'        => $dto->title,
+			'media_count'  => count( $url_mapping ) + ( $thumbnail_id ? 1 : 0 ),
 			'thumbnail_id' => $thumbnail_id,
 			'error'        => null,
 		);

@@ -59,7 +59,48 @@ w2w_assert_equals( $post_id, $updated_post_id, 'Updating existing post must retu
 $updated_post = get_post( $post_id );
 w2w_assert_equals( '10 Tips for Better Health (Updated)', $updated_post->post_title, 'Updated post title must be reflected' );
 
-// 4. Test invalid DTO throws InvalidArgumentException
+// 4. Test Deduplication by URL (when original_id differs or is regenerated)
+$dto_same_url = new W2W_Post_DTO(
+	'wix-id-different-hash',
+	'10 Tips for Better Health (Same URL)',
+	'<p>Updated content</p>',
+	'10-tips-for-better-health',
+	'https://mysite.wixsite.com/blog/post/10-tips-for-better-health'
+);
+$same_url_post_id = $writer->write_post( $dto_same_url, $author_id );
+w2w_assert_equals( $post_id, $same_url_post_id, 'Post with identical original URL must match and update existing post' );
+
+// 5. Test Deduplication by Slug (when neither ID nor URL match, but slug matches)
+$dto_same_slug = new W2W_Post_DTO(
+	'wix-id-another-hash-99',
+	'10 Tips for Better Health (Same Slug)',
+	'<p>Slug match content</p>',
+	'10-tips-for-better-health'
+);
+$same_slug_post_id = $writer->write_post( $dto_same_slug, $author_id );
+w2w_assert_equals( $post_id, $same_slug_post_id, 'Post with identical slug must match and update existing post' );
+
+// Direct method checks
+w2w_assert_equals( $post_id, $writer->find_existing_by_wix_id( 'wix-id-another-hash-99' ), 'find_existing_by_wix_id must find existing post' );
+w2w_assert_equals( $post_id, $writer->find_existing_by_url( 'https://mysite.wixsite.com/blog/post/10-tips-for-better-health' ), 'find_existing_by_url must find existing post' );
+w2w_assert_equals( $post_id, $writer->find_existing_by_url( 'https://mysite.wixsite.com/blog/post/10-tips-for-better-health/' ), 'find_existing_by_url with trailing slash must find existing post' );
+w2w_assert_equals( $post_id, $writer->find_existing_by_slug( '10-tips-for-better-health' ), 'find_existing_by_slug must find existing post' );
+w2w_assert_equals( $post_id, $writer->find_existing_by_title( '10 Tips for Better Health (Same Slug)' ), 'find_existing_by_title must find existing post' );
+w2w_assert_null( $writer->find_existing_by_slug( 'non-existent-slug-xyz' ), 'find_existing_by_slug must return null for missing slug' );
+w2w_assert_null( $writer->find_existing_by_title( 'Non-Existent Title 12345' ), 'find_existing_by_title must return null for missing title' );
+
+// 6. Test Deduplication by Title (when Wix ID, URL, and slug all differ)
+$dto_same_title = new W2W_Post_DTO(
+	'wix-id-random-1234',
+	'10 Tips for Better Health (Same Slug)',
+	'<p>Title match content</p>',
+	'different-slug-xyz',
+	'https://different-site.com/blog/different-url'
+);
+$same_title_post_id = $writer->write_post( $dto_same_title, $author_id );
+w2w_assert_equals( $post_id, $same_title_post_id, 'Post with identical title must match and update existing post' );
+
+// 7. Test invalid DTO throws InvalidArgumentException
 $invalid_dto = new W2W_Post_DTO( '', '' );
 $exception_thrown = false;
 try {
@@ -68,3 +109,5 @@ try {
 	$exception_thrown = true;
 }
 w2w_assert_true( $exception_thrown, 'Invalid DTO must trigger InvalidArgumentException' );
+
+

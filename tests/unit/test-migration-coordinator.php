@@ -43,6 +43,9 @@ w2w_assert_not_null( $result['thumbnail_id'], 'Thumbnail ID must be resolved' );
 $created_post = get_post( $result['post_id'] );
 w2w_assert_equals( 'comprehensive-end-to-end-migration-test', $created_post->post_name, 'Slug must be preserved' );
 w2w_assert_false( strpos( $created_post->post_content, 'data-mesh-id' ), 'Wix artifacts must be cleaned from post body' );
+w2w_assert_contains( 'max-width: 100%', $created_post->post_content, 'Content image must receive inline max-width: 100% style to prevent layout breakout' );
+w2w_assert_contains( '<figure class="wp-block-image size-full">', $created_post->post_content, 'Content image must be wrapped in WordPress standard wp-block-image figure' );
+w2w_assert_contains( 'wp-image-', $created_post->post_content, 'Content image must have wp-image class with attachment ID' );
 
 // Verify categories
 $assigned_cats = wp_get_post_terms( $result['post_id'], 'category' );

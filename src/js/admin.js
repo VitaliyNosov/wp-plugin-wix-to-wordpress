@@ -278,6 +278,11 @@
     if (!btnStart) return;
 
     btnStart.addEventListener('click', async function () {
+      // Guard against multiple clicks or concurrent loops
+      if (state.isMigrating) {
+        return;
+      }
+
       // Gather checked indices
       const checkedBoxes = Array.from(document.querySelectorAll('.w2w-post-cb:checked'));
       if (checkedBoxes.length === 0) {
@@ -291,17 +296,28 @@
       state.isPaused = false;
       state.isCancelled = false;
 
-      // Extract batch configuration
+      // Extract batch configuration elements
       const chunkSizeSelect = document.getElementById('w2w-chunk-size');
-      state.chunkSize = chunkSizeSelect ? parseInt(chunkSizeSelect.value, 10) : 3;
-
       const authorSelect = document.getElementById('w2w_target_author');
-      const authorId = authorSelect ? authorSelect.value : 1;
-
       const catInput = document.getElementById('w2w_default_category');
-      const defaultCategory = catInput ? catInput.value.trim() : '';
-
       const imgCheckbox = document.getElementById('w2w_import_images');
+      const selectAllCb = document.getElementById('w2w-cb-select-all');
+
+      // Lock controls and start button immediately
+      btnStart.disabled = true;
+      const origBtnHtml = btnStart.innerHTML;
+      btnStart.innerHTML = '<span class="dashicons dashicons-update spin"></span> ' + (window.w2wAdmin?.i18n?.migrating || 'Migrating posts...');
+
+      if (chunkSizeSelect) chunkSizeSelect.disabled = true;
+      if (authorSelect) authorSelect.disabled = true;
+      if (catInput) catInput.disabled = true;
+      if (imgCheckbox) imgCheckbox.disabled = true;
+      document.querySelectorAll('.w2w-post-cb').forEach((cb) => (cb.disabled = true));
+      if (selectAllCb) selectAllCb.disabled = true;
+
+      state.chunkSize = chunkSizeSelect ? parseInt(chunkSizeSelect.value, 10) : 3;
+      const authorId = authorSelect ? authorSelect.value : 1;
+      const defaultCategory = catInput ? catInput.value.trim() : '';
       const importImages = imgCheckbox ? (imgCheckbox.checked ? 'true' : 'false') : 'true';
 
       // Reset Stats
@@ -319,57 +335,68 @@
 
       appendLog(`Starting migration batch [${state.batchId}] with ${state.stats.total} posts...`, 'info');
 
-      // Chunk processing queue
-      const queue = [...state.selectedIndices];
+      try {
+        // Chunk processing queue
+        const queue = [...state.selectedIndices];
 
-      while (queue.length > 0 && !state.isCancelled) {
-        if (state.isPaused) {
-          await new Promise((r) => setTimeout(r, 500));
-          continue;
-        }
-
-        const chunkIndices = queue.splice(0, state.chunkSize);
-
-        try {
-          const chunkData = await ajaxPost('w2w_import_chunk', {
-            batch_id: state.batchId,
-            session_id: state.sessionId,
-            indices: chunkIndices,
-            author_id: authorId,
-            default_category: defaultCategory,
-            import_images: importImages,
-          });
-
-          if (chunkData.results && Array.isArray(chunkData.results)) {
-            chunkData.results.forEach((res) => {
-              if (res.success) {
-                state.stats.imported++;
-                state.stats.media += res.media_count || 0;
-                appendLog(`✓ Imported: "${res.title || 'Post'}" (ID: ${res.post_id})`, 'info');
-              } else {
-                state.stats.failed++;
-                appendLog(`✗ Failed: "${res.title || 'Post'}" - ${res.error || 'Unknown error'}`, 'error');
-              }
-            });
+        while (queue.length > 0 && !state.isCancelled) {
+          if (state.isPaused) {
+            await new Promise((r) => setTimeout(r, 500));
+            continue;
           }
 
-          updateProgress();
-        } catch (err) {
-          appendLog(`Chunk request failed: ${err.message}`, 'error');
-          state.stats.failed += chunkIndices.length;
-          updateProgress();
+          const chunkIndices = queue.splice(0, state.chunkSize);
+
+          try {
+            const chunkData = await ajaxPost('w2w_import_chunk', {
+              batch_id: state.batchId,
+              session_id: state.sessionId,
+              indices: chunkIndices,
+              author_id: authorId,
+              default_category: defaultCategory,
+              import_images: importImages,
+            });
+
+            if (chunkData.results && Array.isArray(chunkData.results)) {
+              chunkData.results.forEach((res) => {
+                if (res.success) {
+                  state.stats.imported++;
+                  state.stats.media += res.media_count || 0;
+                  appendLog(`✓ Imported: "${res.title || 'Post'}" (ID: ${res.post_id})`, 'info');
+                } else {
+                  state.stats.failed++;
+                  appendLog(`✗ Failed: "${res.title || 'Post'}" - ${res.error || 'Unknown error'}`, 'error');
+                }
+              });
+            }
+
+            updateProgress();
+          } catch (err) {
+            appendLog(`Chunk request failed: ${err.message}`, 'error');
+            state.stats.failed += chunkIndices.length;
+            updateProgress();
+          }
+
+          // Brief delay between chunks to keep server responsive
+          await new Promise((r) => setTimeout(r, 200));
         }
 
-        // Brief delay between chunks to keep server responsive
-        await new Promise((r) => setTimeout(r, 200));
-      }
-
-      state.isMigrating = false;
-      if (state.isCancelled) {
-        appendLog('Migration cancelled by user.', 'warn');
-      } else {
-        appendLog(`Migration finished! Imported: ${state.stats.imported}, Failed: ${state.stats.failed}, Media: ${state.stats.media}`, 'info');
-        alert(window.w2wAdmin?.i18n?.complete || 'Migration completed successfully!');
+        if (state.isCancelled) {
+          appendLog('Migration cancelled by user.', 'warn');
+        } else {
+          appendLog(`Migration finished! Imported: ${state.stats.imported}, Failed: ${state.stats.failed}, Media: ${state.stats.media}`, 'info');
+          alert(window.w2wAdmin?.i18n?.complete || 'Migration completed successfully!');
+        }
+      } finally {
+        state.isMigrating = false;
+        btnStart.disabled = false;
+        btnStart.innerHTML = origBtnHtml;
+        if (chunkSizeSelect) chunkSizeSelect.disabled = false;
+        if (authorSelect) authorSelect.disabled = false;
+        if (catInput) catInput.disabled = false;
+        if (imgCheckbox) imgCheckbox.disabled = false;
+        document.querySelectorAll('.w2w-post-cb').forEach((cb) => (cb.disabled = false));
+        if (selectAllCb) selectAllCb.disabled = false;
       }
     });
 

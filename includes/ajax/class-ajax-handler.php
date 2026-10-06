@@ -215,8 +215,24 @@ class W2W_Ajax_Handler {
 
 		// 1. Retrieve DTOs via session transient if session_id and indices provided.
 		if ( ! empty( $session_id ) && isset( $_POST['indices'] ) ) {
-			$raw_indices = is_array( $_POST['indices'] ) ? $_POST['indices'] : explode( ',', (string) $_POST['indices'] );
-			$indices     = array_map( 'intval', $raw_indices );
+			$raw_indices = $_POST['indices'];
+			if ( is_string( $raw_indices ) ) {
+				$decoded = json_decode( wp_unslash( $raw_indices ), true );
+				if ( is_array( $decoded ) ) {
+					$raw_indices = $decoded;
+				} else {
+					$clean_str   = trim( (string) wp_unslash( $raw_indices ), "[] \t\n\r\0\x0B" );
+					$raw_indices = '' !== $clean_str ? explode( ',', $clean_str ) : array();
+				}
+			}
+
+			$indices = array();
+			foreach ( (array) $raw_indices as $idx ) {
+				$val = trim( (string) $idx );
+				if ( '' !== $val && is_numeric( $val ) ) {
+					$indices[] = (int) $val;
+				}
+			}
 
 			$cached = get_transient( 'w2w_session_' . $session_id );
 			if ( is_array( $cached ) ) {
@@ -261,6 +277,9 @@ class W2W_Ajax_Handler {
 						if ( ! empty( $scraped_list[0] ) ) {
 							$scraped_dto = $scraped_list[0];
 							$dto->content = $scraped_dto->content;
+							if ( ! empty( $scraped_dto->title ) ) {
+								$dto->title = $scraped_dto->title;
+							}
 							if ( empty( $dto->featured_image_url ) ) {
 								$dto->featured_image_url = $scraped_dto->featured_image_url;
 							}
